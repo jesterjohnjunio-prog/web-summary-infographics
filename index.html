@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Updates Closed Tickets Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        
+        body { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .dashboard-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(90deg, #e74c3c, #f1c40f);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .dashboard-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 25px;
+            background: #f8fafc;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .stat-content h3 {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c5282;
+        }
+        
+        .stat-subtitle {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            padding: 25px;
+        }
+        
+        /* Personnel Performance Section */
+        .personnel-section {
+            padding: 25px;
+            background: #f8fafc;
+            margin-top: 10px;
+        }
+        
+        .personnel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .personnel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c5282;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .personnel-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .personnel-filter {
+            padding: 8px 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.9rem;
+        }
+        
+        .personnel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .personnel-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .personnel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .personnel-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .personnel-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .personnel-info h3 {
+            font-size: 1.2rem;
+            color: #2c5282;
+            margin-bottom: 5px;
+        }
+        
+        .personnel-info p {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .personnel-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .personnel-stat {
+            text-align: center;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        
+        .personnel-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c5282;
+            margin-bottom: 5px;
+        }
+        
+        .personnel-stat-label {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+        
+        .personnel-performance-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .personnel-performance-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .personnel-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stars {
+            color: #f6ad55;
+            font-size: 0.9rem;
+        }
+        
+        .personnel-chart-mini {
+            height: 60px;
+            margin-top: 15px;
+        }
+        
+        .personnel-tickets {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            color: #718096;
+        }
+        
+        /* Top Performers Summary */
+        .top-performers {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+        
+        .top-performers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .top-performers-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c5282;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .performance-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .performance-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .performance-table tr:hover {
+            background: #f7fafc;
+        }
+        
+        .rank {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #4a6fa5;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .rank-1 { background: linear-gradient(135deg, #f6e05e, #d69e2e); }
+        .rank-2 { background: linear-gradient(135deg, #cbd5e0, #a0aec0); }
+        .rank-3 { background: linear-gradient(135deg, #ed8936, #c05621); }
+        
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .rating-excellent { background: #c6f6d5; color: #22543d; }
+        .rating-good { background: #fed7d7; color: #742a2a; }
+        .rating-average { background: #feebc8; color: #744210; }
+        .rating-poor { background: #e2e8f0; color: #2d3748; }
+        
+        /* Combined Performance Score */
+        .performance-score {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a6fa5, #2c5282);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+        
+        .score-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        /* Existing chart styles... */
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c5282;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-subtitle {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+        
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: #64748b;
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #4a6fa5;
+        }
+        
+        .error-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: #e53e3e;
+            text-align: center;
+        }
+        
+        .refresh-btn {
+            background: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .refresh-btn:hover {
+            background: #2c5282;
+        }
+        
+        .dashboard-footer {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            .personnel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .charts-container {
+                padding: 15px;
+            }
+            
+            .chart-card {
+                padding: 15px;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+            
+            .personnel-section {
+                padding: 15px;
+            }
+            
+            .personnel-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .personnel-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .personnel-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-chart-line"></i> Website Updates Analytics Dashboard</h1>
+            <p>Comprehensive analysis of resolved Website Updates service requests with insights into personnel performance, response times, and service metrics</p>
+        </div>
+        
+        <div class="stats-summary" id="statsSummary">
+            <!-- Stats will be populated by JavaScript -->
+        </div>
+        
+        <!-- Personnel Performance Section -->
+        <div class="personnel-section" id="personnelSection" style="display: none;">
+            <div class="personnel-header">
+                <div class="personnel-title">
+                    <i class="fas fa-user-tie"></i> Personnel Performance Analytics
+                </div>
+                <div class="personnel-controls">
+                    <div>
+                        <span style="font-size: 0.9rem; color: #64748b; margin-right: 10px;">Sort by:</span>
+                        <select class="personnel-filter" id="sortPersonnel">
+                            <option value="score-desc">Highest Combined Score</option>
+                            <option value="score-asc">Lowest Combined Score</option>
+                            <option value="rating-desc">Highest Rating</option>
+                            <option value="rating-asc">Lowest Rating</option>
+                            <option value="response-asc">Fastest Response</option>
+                            <option value="response-desc">Slowest Response</option>
+                            <option value="tickets-desc">Most Tickets</option>
+                            <option value="tickets-asc">Fewest Tickets</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.9rem; color: #64748b; margin-right: 10px;">Show:</span>
+                        <select class="personnel-filter" id="filterPersonnel">
+                            <option value="all">All Personnel</option>
+                            <option value="top10">Top 10 Performers</option>
+                            <option value="top20">Top 20 Performers</option>
+                            <option value="score8">Score 8.0+ (Excellent)</option>
+                            <option value="score6">Score 6.0-7.9 (Good)</option>
+                            <option value="score4">Score 4.0-5.9 (Average)</option>
+                            <option value="score2">Score Below 4.0 (Poor)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="personnel-grid" id="personnelGrid">
+                <!-- Personnel cards will be populated by JavaScript -->
+            </div>
+            
+            <div class="top-performers" id="topPerformers">
+                <div class="top-performers-header">
+                    <div class="top-performers-title">
+                        <i class="fas fa-trophy"></i> Performance Rankings (Higher Score = Better Performance)
+                    </div>
+                    <div style="font-size: 0.9rem; color: #64748b;">
+                        Showing <span id="personnelCount">0</span> personnel members
+                    </div>
+                </div>
+                
+                <table class="performance-table" id="performanceTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Rank</th>
+                            <th>Personnel Name</th>
+                            <th style="width: 100px;">Combined Score</th>
+                            <th style="width: 100px;">Avg Rating</th>
+                            <th style="width: 150px;">Avg Response Time</th>
+                            <th style="width: 100px;">Total Tickets</th>
+                            <th style="width: 120px;">Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="charts-container">
+            <!-- Chart 1: Demographics (Age & Gender) -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title"><i class="fas fa-users"></i> Demographics Overview</div>
+                        <div class="chart-subtitle">Age distribution and sex breakdown of talent</div>
+                    </div>
+                </div>
+                <div class="chart-container" id="demographicsChart"></div>
+                <div class="legend" id="demographicsLegend"></div>
+            </div>
+            
+            <!-- Chart 2: Regulation Area Distribution -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title"><i class="fas fa-sitemap"></i> Website Update Types</div>
+                        <div class="chart-subtitle">Distribution of tickets across website update types</div>
+                    </div>
+                </div>
+                <div class="chart-container" id="updateTypeChart"></div>
+                <div class="legend" id="updateTypeLegend"></div>
+            </div>
+            
+            <!-- Chart 3: Response Time Performance -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title"><i class="fas fa-stopwatch"></i> Response Time Analysis</div>
+                        <div class="chart-subtitle">Distribution by response time categories</div>
+                    </div>
+                </div>
+                <div class="chart-container" id="responseTimeChart"></div>
+                <div class="legend" id="responseTimeLegend"></div>
+            </div>
+            
+            <!-- Chart 4: Performance Ratings -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title"><i class="fas fa-star"></i> Performance Ratings</div>
+                        <div class="chart-subtitle">Average performance ratings across different categories</div>
+                    </div>
+                </div>
+                <div class="chart-container" id="performanceChart"></div>
+                <div class="legend" id="performanceLegend"></div>
+            </div>
+            
+            <!-- Chart 5: Correlation Analysis -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title"><i class="fas fa-project-diagram"></i> Correlation Analysis</div>
+                        <div class="chart-subtitle">Response time vs. performance rating correlation</div>
+                    </div>
+                </div>
+                <div class="chart-container" id="correlationChart"></div>
+                <div class="legend" id="correlationLegend"></div>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h2>Loading Website Updates Analytics</h2>
+            <p>Fetching and analyzing data from Google Sheets...</p>
+        </div>
+        
+        <div id="error" class="error-message" style="display: none;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>Unable to Load Analytics Data</h2>
+            <p id="errorMessage">Please check your connection and try again.</p>
+            <button class="refresh-btn" onclick="loadClosedTicketsData()">
+                <i class="fas fa-redo-alt"></i> Try Again
+            </button>
+        </div>
+        
+        <div class="dashboard-footer">
+            <p>Data Source: Website Updates - Closed Tickets Sheet | Last Updated: <span id="lastUpdated"></span></p>
+            <p>Analytics Dashboard • Auto-refreshes every 10 minutes</p>
+        </div>
+    </div>
+
+    <script>
+        // Main data storage
+        let closedTicketsData = [];
+        let analyticsSummary = {};
+        let personnelPerformance = {}; // Store personnel performance data
+        
+        // Response time mapping
+        const responseTimeMapping = {
+            'Less than one (1) hour': { numericValue: 0.5, label: 'Less than 1 hour', description: '<1 hr' },
+            'Within the day': { numericValue: 4.5, label: 'Within the day', description: '1-8 hrs' },
+            'The next day': { numericValue: 12, label: 'The next day', description: '8-16 hrs' },
+            'More than two (2) days': { numericValue: 24, label: 'More than 2 days', description: '>16 hrs' },
+            'Less than one hour': { numericValue: 0.5, label: 'Less than 1 hour', description: '<1 hr' },
+            'Within the day (1-8 hrs)': { numericValue: 4.5, label: 'Within the day', description: '1-8 hrs' },
+            'The next day (8-16 hrs)': { numericValue: 12, label: 'The next day', description: '8-16 hrs' },
+            'More than 2 days': { numericValue: 24, label: 'More than 2 days', description: '>16 hrs' },
+            'More than two days': { numericValue: 24, label: 'More than 2 days', description: '>16 hrs' }
+        };
+        
+        // Color scales
+        const colorScale = d3.scaleOrdinal()
+            .range(['#4a6fa5', '#2c5282', '#38a169', '#d69e2e', '#e53e3e', '#805ad5', '#dd6b20', '#319795']);
+        
+        // Tooltip element
+        const tooltip = d3.select('body').append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+        
+        // Function to convert response time text to numeric value
+        function convertResponseTimeToNumeric(responseTimeText) {
+            if (!responseTimeText) return 0;
+            
+            const normalizedText = responseTimeText.trim();
+            
+            if (responseTimeMapping[normalizedText]) {
+                return responseTimeMapping[normalizedText].numericValue;
+            }
+            
+            for (const [key, value] of Object.entries(responseTimeMapping)) {
+                if (normalizedText.toLowerCase().includes(key.toLowerCase())) {
+                    return value.numericValue;
+                }
+            }
+            
+            console.log('Unknown response time category:', normalizedText);
+            return 0;
+        }
+        
+        // Function to get response time category info
+        function getResponseTimeCategoryInfo(responseTimeText) {
+            if (!responseTimeText) return null;
+            
+            const normalizedText = responseTimeText.trim();
+            
+            if (responseTimeMapping[normalizedText]) {
+                return responseTimeMapping[normalizedText];
+            }
+            
+            for (const [key, value] of Object.entries(responseTimeMapping)) {
+                if (normalizedText.toLowerCase().includes(key.toLowerCase())) {
+                    return value;
+                }
+            }
+            
+            return null;
+        }
+        
+        // Function to get initials from name
+        function getInitials(name) {
+            if (!name) return '?';
+            const parts = name.split(' ');
+            if (parts.length >= 2) {
+                return (parts[0][0] + parts[1][0]).toUpperCase();
+            }
+            return name.substring(0, 2).toUpperCase();
+        }
+        
+        // Function to get performance category based on COMBINED SCORE
+        function getPerformanceCategory(combinedScore) {
+            if (combinedScore >= 8.0) return { label: 'Excellent', class: 'rating-excellent', stars: 5 };
+            if (combinedScore >= 6.0) return { label: 'Good', class: 'rating-good', stars: 4 };
+            if (combinedScore >= 4.0) return { label: 'Average', class: 'rating-average', stars: 3 };
+            if (combinedScore >= 2.0) return { label: 'Below Average', class: 'rating-poor', stars: 2 };
+            return { label: 'Poor', class: 'rating-poor', stars: 1 };
+        }
+        
+        // Function to get stars HTML
+        function getStarsHTML(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            
+            let starsHTML = '';
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '<i class="fas fa-star"></i>';
+            }
+            if (halfStar) {
+                starsHTML += '<i class="fas fa-star-half-alt"></i>';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '<i class="far fa-star"></i>';
+            }
+            return starsHTML;
+        }
+        
+        // Calculate combined performance score (higher is better)
+        function calculateCombinedScore(averagePerformance, averageResponseTime) {
+            // Performance rating component (0-5 scale, converted to 0-5 points)
+            const performanceScore = averagePerformance;
+            
+            // Response time component (lower is better, converted to 0-5 points)
+            // Scale: 0 hours = 5 points, 24+ hours = 0 points
+            let responseScore = 0;
+            if (averageResponseTime > 0) {
+                // Inverse relationship: lower response time = higher score
+                responseScore = Math.max(0, 5 - (averageResponseTime / 5));
+                // Cap the response score at 5
+                responseScore = Math.min(5, responseScore);
+            }
+            
+            // Combined score (weighted average)
+            // Performance weight: 60%, Response time weight: 40%
+            const combinedScore = (performanceScore * 0.6) + (responseScore * 0.4);
+            
+            return {
+                combinedScore: Math.min(10, combinedScore * 2), // Scale to 0-10
+                performanceScore: performanceScore,
+                responseScore: responseScore
+            };
+        }
+        
+        // Function to create mini chart for personnel response times
+        function createMiniResponseChart(personnelData, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container || !personnelData.responseTimes || personnelData.responseTimes.length === 0) return;
+            
+            const width = 200;
+            const height = 40;
+            const margin = { top: 5, right: 5, bottom: 5, left: 5 };
+            
+            const svg = d3.select(`#${containerId}`)
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+            
+            const responseTimes = personnelData.responseTimes.slice(-6); // Last 6 response times
+            
+            const x = d3.scaleBand()
+                .domain(responseTimes.map((d, i) => i))
+                .range([margin.left, width - margin.right])
+                .padding(0.2);
+            
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(responseTimes)])
+                .nice()
+                .range([height - margin.bottom, margin.top]);
+            
+            svg.selectAll('.mini-bar')
+                .data(responseTimes)
+                .enter()
+                .append('rect')
+                .attr('class', 'mini-bar')
+                .attr('x', (d, i) => x(i))
+                .attr('y', d => y(d))
+                .attr('width', x.bandwidth())
+                .attr('height', d => height - margin.bottom - y(d))
+                .attr('fill', d => {
+                    if (d < 1) return '#38a169';        // Excellent: <1 hour
+                    if (d <= 4) return '#68d391';      // Very Good: 1-4 hours
+                    if (d <= 8) return '#d69e2e';      // Good: 4-8 hours
+                    if (d <= 12) return '#ed8936';     // Average: 8-12 hours
+                    if (d <= 16) return '#dd6b20';     // Below Average: 12-16 hours
+                    return '#e53e3e';                  // Poor: >16 hours
+                })
+                .attr('rx', 2)
+                .attr('ry', 2);
+        }
+        
+        // Load data from Google Sheets
+        async function loadClosedTicketsData() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const statsSummary = document.getElementById('statsSummary');
+            const personnelSection = document.getElementById('personnelSection');
+            
+            loading.style.display = 'flex';
+            error.style.display = 'none';
+            statsSummary.innerHTML = '';
+            personnelSection.style.display = 'none';
+            
+            try {
+                // Using the provided Website Updates Closed Ticket sheet URL
+                const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLmIeIOdtDoDMI0WOMYMjsa77L2S-gF9OyL7eyLvbnGJatNeFDHRgiN5qLZPhYEDsUx1wINXebriLT/pub?gid=744987615&single=true&output=csv';
+                
+                console.log('Loading Website Updates closed tickets from:', sheetUrl);
+                
+                let response;
+                try {
+                    // Try with CORS proxy first
+                    const corsProxy = 'https://api.allorigins.win/raw?url=';
+                    const csvUrl = corsProxy + encodeURIComponent(sheetUrl);
+                    response = await fetch(csvUrl);
+                } catch (proxyError) {
+                    console.log('CORS proxy failed, trying direct access...');
+                    response = await fetch(sheetUrl);
+                }
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const csvText = await response.text();
+                
+                // Parse CSV
+                const rows = csvText.split('\n');
+                closedTicketsData = [];
+                
+                // Parse and filter valid rows
+                for (let i = 1; i < rows.length; i++) {
+                    if (rows[i].trim() === '') continue;
+                    
+                    const cols = parseCSVRow(rows[i]);
+                    
+                    // Check if we have the required columns (A-L)
+                    if (cols.length >= 12) {
+                        // Get personnel name from column I (Service Performed by)
+                        const personnelName = cols[8] || '';
+                        
+                        // Get response time text from column J (Response Time)
+                        const responseTimeText = cols[9] || '';
+                        
+                        // Get performance rating from column L
+                        const performanceRating = parseFloat(cols[11]) || 0;
+                        
+                        // SKIP TICKETS WITHOUT RATING (cancelled tickets)
+                        if (performanceRating <= 0) {
+                            continue; // Skip this ticket
+                        }
+                        
+                        // Convert response time text to numeric value
+                        const responseTimeNumeric = convertResponseTimeToNumeric(responseTimeText);
+                        const responseTimeCategory = getResponseTimeCategoryInfo(responseTimeText);
+                        
+                        // Create ticket object with your actual column structure
+                        const ticket = {
+                            'Ticket Number': cols[0] || '',                // Column A
+                            'Date': cols[1] || '',                         // Column B
+                            'Talent Name': cols[2] || '',                  // Column C
+                            'Age': cols[3] || '',                          // Column D
+                            'Sex': cols[4] || '',                          // Column E
+                            'Talent Email': cols[5] || '',                 // Column F
+                            'Type of Website Update': cols[6] || '',       // Column G
+                            'Preferred MIS Personnel': cols[7] || '',      // Column H
+                            'Service performed by': personnelName,         // Column I
+                            'Response Time Text': responseTimeText,        // Column J (text)
+                            'Response Time': responseTimeNumeric,          // Converted numeric value
+                            'Response Time Category': responseTimeCategory, // Category info
+                            'Comments / Feedback': cols[10] || '',         // Column K
+                            'Performance Rating': performanceRating        // Column L
+                        };
+                        
+                        // Only add if we have at least some valid data
+                        if (ticket['Age'] || ticket['Sex'] || ticket['Type of Website Update'] || 
+                            ticket['Response Time'] > 0 || ticket['Performance Rating'] > 0 || 
+                            ticket['Service performed by']) {
+                            closedTicketsData.push(ticket);
+                        }
+                    }
+                }
+                
+                console.log('Loaded', closedTicketsData.length, 'Website Updates closed tickets with ratings');
+                console.log('Sample ticket:', closedTicketsData[0]);
+                
+                if (closedTicketsData.length > 0) {
+                    // Analyze data
+                    analyzeData();
+                    
+                    // Analyze personnel performance
+                    analyzePersonnelPerformance();
+                    
+                    // Update last updated timestamp
+                    document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                    
+                    // Hide loading, show charts
+                    loading.style.display = 'none';
+                    
+                    // Create all visualizations
+                    createSummaryStats();
+                    createDemographicsChart();
+                    createUpdateTypeChart();
+                    createResponseTimeChart();
+                    createPerformanceChart();
+                    createCorrelationChart();
+                    
+                    // Create personnel performance section
+                    createPersonnelPerformance();
+                    personnelSection.style.display = 'block';
+                    
+                } else {
+                    throw new Error('No valid Website Updates closed ticket data with ratings found in sheet');
+                }
+                
+            } catch (err) {
+                console.error('Error loading Website Updates closed tickets:', err);
+                document.getElementById('errorMessage').textContent = err.message;
+                loading.style.display = 'none';
+                error.style.display = 'flex';
+            }
+        }
+        
+        // Parse CSV row with proper handling of quoted fields
+        function parseCSVRow(row) {
+            const cols = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < row.length; i++) {
+                const char = row[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    cols.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            cols.push(current.trim());
+            return cols;
+        }
+        
+        // Analyze the data to create summary statistics
+        function analyzeData() {
+            analyticsSummary = {
+                totalTickets: closedTicketsData.length,
+                
+                // Age analysis
+                ageGroups: {},
+                averageAge: 0,
+                
+                // Gender analysis
+                genderCount: { Male: 0, Female: 0 },
+                
+                // Website update type analysis
+                updateTypes: {},
+                
+                // Response time analysis
+                responseTimeCategories: {
+                    'Less than 1 hour': { 
+                        label: 'Less than 1 hour', 
+                        description: '<1 hr',
+                        count: 0,
+                        numericValue: 0.5
+                    },
+                    'Within the day': { 
+                        label: 'Within the day', 
+                        description: '1-8 hrs',
+                        count: 0,
+                        numericValue: 4.5
+                    },
+                    'The next day': { 
+                        label: 'The next day', 
+                        description: '8-16 hrs',
+                        count: 0,
+                        numericValue: 12
+                    },
+                    'More than 2 days': { 
+                        label: 'More than 2 days', 
+                        description: '>16 hrs',
+                        count: 0,
+                        numericValue: 24
+                    }
+                },
+                
+                // Response time numeric stats
+                responseTimeStats: {
+                    min: Infinity,
+                    max: 0,
+                    avg: 0,
+                    total: 0
+                },
+                
+                // Performance analysis
+                performanceStats: {
+                    min: Infinity,
+                    max: 0,
+                    avg: 0,
+                    total: 0
+                }
+            };
+            
+            let ageSum = 0;
+            let validAgeCount = 0;
+            let responseTimeSum = 0;
+            let validResponseTimeCount = 0;
+            let performanceSum = 0;
+            let validPerformanceCount = 0;
+            
+            // Process each ticket
+            closedTicketsData.forEach(ticket => {
+                // Age analysis
+                if (ticket.Age) {
+                    const age = parseInt(ticket.Age);
+                    if (!isNaN(age)) {
+                        ageSum += age;
+                        validAgeCount++;
+                        
+                        let ageGroup;
+                        if (age <= 25) ageGroup = '18-25';
+                        else if (age <= 35) ageGroup = '26-35';
+                        else if (age <= 45) ageGroup = '36-45';
+                        else if (age <= 55) ageGroup = '46-55';
+                        else ageGroup = '56+';
+                        
+                        analyticsSummary.ageGroups[ageGroup] = (analyticsSummary.ageGroups[ageGroup] || 0) + 1;
+                    }
+                }
+                
+                // Gender analysis
+                if (ticket.Sex) {
+                    const gender = ticket.Sex.trim().toLowerCase();
+                    if (gender === 'male' || gender === 'm') {
+                        analyticsSummary.genderCount.Male++;
+                    } else if (gender === 'female' || gender === 'f') {
+                        analyticsSummary.genderCount.Female++;
+                    }
+                }
+                
+                // Website update type analysis
+                if (ticket['Type of Website Update']) {
+                    const updateType = ticket['Type of Website Update'].trim();
+                    analyticsSummary.updateTypes[updateType] = (analyticsSummary.updateTypes[updateType] || 0) + 1;
+                }
+                
+                // Response time analysis
+                const responseTime = ticket['Response Time'];
+                if (responseTime > 0) {
+                    // Update category counts based on text category
+                    const categoryInfo = ticket['Response Time Category'];
+                    if (categoryInfo) {
+                        if (categoryInfo.label === 'Less than 1 hour') {
+                            analyticsSummary.responseTimeCategories['Less than 1 hour'].count++;
+                        } else if (categoryInfo.label === 'Within the day') {
+                            analyticsSummary.responseTimeCategories['Within the day'].count++;
+                        } else if (categoryInfo.label === 'The next day') {
+                            analyticsSummary.responseTimeCategories['The next day'].count++;
+                        } else if (categoryInfo.label === 'More than 2 days') {
+                            analyticsSummary.responseTimeCategories['More than 2 days'].count++;
+                        }
+                    }
+                    
+                    // Update numeric stats
+                    responseTimeSum += responseTime;
+                    validResponseTimeCount++;
+                    
+                    if (responseTime < analyticsSummary.responseTimeStats.min) {
+                        analyticsSummary.responseTimeStats.min = responseTime;
+                    }
+                    if (responseTime > analyticsSummary.responseTimeStats.max) {
+                        analyticsSummary.responseTimeStats.max = responseTime;
+                    }
+                }
+                
+                // Performance analysis
+                if (ticket['Performance Rating'] > 0) {
+                    performanceSum += ticket['Performance Rating'];
+                    validPerformanceCount++;
+                    
+                    if (ticket['Performance Rating'] < analyticsSummary.performanceStats.min) {
+                        analyticsSummary.performanceStats.min = ticket['Performance Rating'];
+                    }
+                    if (ticket['Performance Rating'] > analyticsSummary.performanceStats.max) {
+                        analyticsSummary.performanceStats.max = ticket['Performance Rating'];
+                    }
+                }
+            });
+            
+            // Calculate averages
+            if (validAgeCount > 0) {
+                analyticsSummary.averageAge = Math.round(ageSum / validAgeCount);
+            }
+            
+            if (validResponseTimeCount > 0) {
+                analyticsSummary.responseTimeStats.avg = responseTimeSum / validResponseTimeCount;
+                analyticsSummary.responseTimeStats.total = responseTimeSum;
+            }
+            
+            if (validPerformanceCount > 0) {
+                analyticsSummary.performanceStats.avg = performanceSum / validPerformanceCount;
+                analyticsSummary.performanceStats.total = performanceSum;
+            }
+            
+            console.log('Analytics summary:', analyticsSummary);
+        }
+        
+        // Analyze personnel performance
+        function analyzePersonnelPerformance() {
+            personnelPerformance = {};
+            
+            closedTicketsData.forEach(ticket => {
+                const personnelName = ticket['Service performed by'];
+                if (!personnelName) return;
+                
+                if (!personnelPerformance[personnelName]) {
+                    personnelPerformance[personnelName] = {
+                        name: personnelName,
+                        totalTickets: 0,
+                        performanceSum: 0,
+                        responseTimeSum: 0,
+                        performanceTickets: 0,
+                        responseTimeTickets: 0,
+                        responseTimes: [],
+                        updateTypes: {}
+                    };
+                }
+                
+                const personnel = personnelPerformance[personnelName];
+                personnel.totalTickets++;
+                
+                // Track performance
+                if (ticket['Performance Rating'] > 0) {
+                    personnel.performanceSum += ticket['Performance Rating'];
+                    personnel.performanceTickets++;
+                }
+                
+                // Track response time
+                if (ticket['Response Time'] > 0) {
+                    personnel.responseTimeSum += ticket['Response Time'];
+                    personnel.responseTimeTickets++;
+                    personnel.responseTimes.push(ticket['Response Time']);
+                }
+                
+                // Track update types
+                if (ticket['Type of Website Update']) {
+                    const updateType = ticket['Type of Website Update'].trim();
+                    personnel.updateTypes[updateType] = (personnel.updateTypes[updateType] || 0) + 1;
+                }
+            });
+            
+            // Calculate averages and scores for each personnel
+            Object.values(personnelPerformance).forEach(personnel => {
+                personnel.averagePerformance = personnel.performanceTickets > 0 
+                    ? personnel.performanceSum / personnel.performanceTickets 
+                    : 0;
+                
+                personnel.averageResponseTime = personnel.responseTimeTickets > 0 
+                    ? personnel.responseTimeSum / personnel.responseTimeTickets 
+                    : 0;
+                
+                // Calculate combined score (lower response time = higher score)
+                const scoreData = calculateCombinedScore(personnel.averagePerformance, personnel.averageResponseTime);
+                personnel.combinedScore = scoreData.combinedScore;
+                personnel.performanceScore = scoreData.performanceScore;
+                personnel.responseScore = scoreData.responseScore;
+                
+                personnel.performanceCategory = getPerformanceCategory(personnel.combinedScore);
+                
+                // Find most common update type
+                const updateTypeEntries = Object.entries(personnel.updateTypes);
+                personnel.primaryUpdateType = updateTypeEntries.length > 0
+                    ? updateTypeEntries.sort((a, b) => b[1] - a[1])[0][0]
+                    : 'N/A';
+            });
+            
+            console.log('Personnel performance analysis:', personnelPerformance);
+        }
+        
+        // Create personnel performance cards and table
+        function createPersonnelPerformance() {
+            const personnelGrid = document.getElementById('personnelGrid');
+            const performanceTableBody = document.getElementById('performanceTableBody');
+            const personnelCount = document.getElementById('personnelCount');
+            
+            // Convert personnel data to array and sort by combined score
+            let personnelArray = Object.values(personnelPerformance);
+            
+            // Sort by combined score (descending)
+            personnelArray.sort((a, b) => b.combinedScore - a.combinedScore);
+            
+            // Update count
+            personnelCount.textContent = personnelArray.length;
+            
+            // Clear previous content
+            personnelGrid.innerHTML = '';
+            performanceTableBody.innerHTML = '';
+            
+            // Create personnel cards
+            personnelArray.forEach((personnel, index) => {
+                const cardId = `personnel-card-${index}`;
+                const chartId = `personnel-chart-${index}`;
+                
+                // Create card
+                const cardHTML = `
+                    <div class="personnel-card">
+                        <div class="personnel-card-header">
+                            <div class="personnel-avatar">
+                                ${getInitials(personnel.name)}
+                            </div>
+                            <div class="personnel-info">
+                                <h3>${personnel.name}</h3>
+                                <p> </p>
+                            </div>
+                        </div>
+                        
+                        <div class="score-container">
+                            <div class="performance-score">
+                                ${personnel.combinedScore.toFixed(1)}
+                            </div>
+                            <div>
+                                <div style="font-size: 0.9rem; color: #4a5568; font-weight: 600;">Combined Performance Score</div>
+                                <div style="font-size: 0.8rem; color: #718096;">
+                                    Rating: ${personnel.averagePerformance.toFixed(1)}/5 • Response: ${personnel.averageResponseTime.toFixed(1)}h
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="personnel-stats">
+                            <div class="personnel-stat">
+                                <div class="personnel-stat-value">${personnel.averagePerformance.toFixed(1)}</div>
+                                <div class="personnel-stat-label">Avg Rating</div>
+                                <div class="personnel-performance-bar">
+                                    <div class="personnel-performance-fill" 
+                                         style="width: ${(personnel.averagePerformance / 5) * 100}%; 
+                                                background-color: ${personnel.averagePerformance >= 4 ? '#38a169' : 
+                                                                   personnel.averagePerformance >= 3 ? '#d69e2e' : '#e53e3e'};">
+                                    </div>
+                                </div>
+                                <div class="personnel-rating">
+                                    <div class="stars">
+                                        ${getStarsHTML(personnel.averagePerformance)}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="personnel-stat">
+                                <div class="personnel-stat-value">${personnel.averageResponseTime.toFixed(1)}h</div>
+                                <div class="personnel-stat-label">Avg Response Time</div>
+                                <div class="personnel-stat-label" style="margin-top: 5px;">
+                                    <span style="color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
+                                                       personnel.averageResponseTime <= 4 ? '#68d391' : 
+                                                       personnel.averageResponseTime <= 8 ? '#d69e2e' : 
+                                                       personnel.averageResponseTime <= 12 ? '#ed8936' : 
+                                                       personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}; font-weight: 600;">
+                                        ${personnel.averageResponseTime < 1 ? 'Excellent' : 
+                                         personnel.averageResponseTime <= 4 ? 'Very Good' : 
+                                         personnel.averageResponseTime <= 8 ? 'Good' : 
+                                         personnel.averageResponseTime <= 12 ? 'Average' : 
+                                         personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="personnel-chart-mini" id="${chartId}"></div>
+                        
+                        <div class="personnel-tickets">
+                            <div><strong>${personnel.totalTickets}</strong> total tickets handled</div>
+                            <div>Most common update type: ${personnel.primaryUpdateType.substring(0, 30)}${personnel.primaryUpdateType.length > 30 ? '...' : ''}</div>
+                        </div>
+                    </div>
+                `;
+                
+                personnelGrid.innerHTML += cardHTML;
+                
+                // Create mini chart for response times
+                createMiniResponseChart(personnel, chartId);
+                
+                // Add to table
+                const rowHTML = `
+                    <tr>
+                        <td>
+                            <div class="rank ${index < 3 ? `rank-${index + 1}` : ''}">
+                                ${index + 1}
+                            </div>
+                        </td>
+                        <td><strong>${personnel.name}</strong></td>
+                        <td><strong style="font-size: 1.1rem;">${personnel.combinedScore.toFixed(1)}</strong>/10</td>
+                        <td>${personnel.averagePerformance.toFixed(1)}/5</td>
+                        <td>
+                            ${personnel.averageResponseTime.toFixed(1)}h
+                            <div style="font-size: 0.8rem; color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
+                                                                   personnel.averageResponseTime <= 4 ? '#68d391' : 
+                                                                   personnel.averageResponseTime <= 8 ? '#d69e2e' : 
+                                                                   personnel.averageResponseTime <= 12 ? '#ed8936' : 
+                                                                   personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}">
+                                ${personnel.averageResponseTime < 1 ? 'Excellent' : 
+                                 personnel.averageResponseTime <= 4 ? 'Very Good' : 
+                                 personnel.averageResponseTime <= 8 ? 'Good' : 
+                                 personnel.averageResponseTime <= 12 ? 'Average' : 
+                                 personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
+                            </div>
+                        </td>
+                        <td>${personnel.totalTickets}</td>
+                        <td>
+                            <span class="rating-badge ${personnel.performanceCategory.class}">
+                                ${personnel.performanceCategory.label}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                
+                performanceTableBody.innerHTML += rowHTML;
+            });
+            
+            // Add event listeners for filters
+            document.getElementById('sortPersonnel').addEventListener('change', function() {
+                sortAndFilterPersonnel();
+            });
+            
+            document.getElementById('filterPersonnel').addEventListener('change', function() {
+                sortAndFilterPersonnel();
+            });
+        }
+        
+        // Sort and filter personnel
+        function sortAndFilterPersonnel() {
+            const sortBy = document.getElementById('sortPersonnel').value;
+            const filterBy = document.getElementById('filterPersonnel').value;
+            
+            let personnelArray = Object.values(personnelPerformance);
+            
+            // Apply filter
+            switch(filterBy) {
+                case 'top10':
+                    personnelArray = personnelArray.slice(0, 10);
+                    break;
+                case 'top20':
+                    personnelArray = personnelArray.slice(0, 20);
+                    break;
+                case 'score8':
+                    personnelArray = personnelArray.filter(p => p.combinedScore >= 8.0);
+                    break;
+                case 'score6':
+                    personnelArray = personnelArray.filter(p => p.combinedScore >= 6.0 && p.combinedScore < 8.0);
+                    break;
+                case 'score4':
+                    personnelArray = personnelArray.filter(p => p.combinedScore >= 4.0 && p.combinedScore < 6.0);
+                    break;
+                case 'score2':
+                    personnelArray = personnelArray.filter(p => p.combinedScore < 4.0);
+                    break;
+                // 'all' - keep all personnel
+            }
+            
+            // Apply sort
+            switch(sortBy) {
+                case 'score-desc':
+                    personnelArray.sort((a, b) => b.combinedScore - a.combinedScore);
+                    break;
+                case 'score-asc':
+                    personnelArray.sort((a, b) => a.combinedScore - b.combinedScore);
+                    break;
+                case 'rating-desc':
+                    personnelArray.sort((a, b) => b.averagePerformance - a.averagePerformance);
+                    break;
+                case 'rating-asc':
+                    personnelArray.sort((a, b) => a.averagePerformance - b.averagePerformance);
+                    break;
+                case 'response-asc':
+                    personnelArray.sort((a, b) => a.averageResponseTime - b.averageResponseTime);
+                    break;
+                case 'response-desc':
+                    personnelArray.sort((a, b) => b.averageResponseTime - a.averageResponseTime);
+                    break;
+                case 'tickets-desc':
+                    personnelArray.sort((a, b) => b.totalTickets - a.totalTickets);
+                    break;
+                case 'tickets-asc':
+                    personnelArray.sort((a, b) => a.totalTickets - b.totalTickets);
+                    break;
+            }
+            
+            // Update display
+            updatePersonnelDisplay(personnelArray);
+        }
+        
+        // Update personnel display after sorting/filtering
+        function updatePersonnelDisplay(personnelArray) {
+            const personnelGrid = document.getElementById('personnelGrid');
+            const performanceTableBody = document.getElementById('performanceTableBody');
+            const personnelCount = document.getElementById('personnelCount');
+            
+            // Update count
+            personnelCount.textContent = personnelArray.length;
+            
+            // Clear previous content
+            personnelGrid.innerHTML = '';
+            performanceTableBody.innerHTML = '';
+            
+            // Create updated cards and table rows
+            personnelArray.forEach((personnel, index) => {
+                const cardId = `personnel-card-${index}`;
+                const chartId = `personnel-chart-${index}`;
+                
+                // Create card
+                const cardHTML = `
+                    <div class="personnel-card">
+                        <div class="personnel-card-header">
+                            <div class="personnel-avatar">
+                                ${getInitials(personnel.name)}
+                            </div>
+                            <div class="personnel-info">
+                                <h3>${personnel.name}</h3>
+                                <p> </p>
+                            </div>
+                        </div>
+                        
+                        <div class="score-container">
+                            <div class="performance-score">
+                                ${personnel.combinedScore.toFixed(1)}
+                            </div>
+                            <div>
+                                <div style="font-size: 0.9rem; color: #4a5568; font-weight: 600;">Combined Performance Score</div>
+                                <div style="font-size: 0.8rem; color: #718096;">
+                                    Rating: ${personnel.averagePerformance.toFixed(1)}/5 • Response: ${personnel.averageResponseTime.toFixed(1)}h
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="personnel-stats">
+                            <div class="personnel-stat">
+                                <div class="personnel-stat-value">${personnel.averagePerformance.toFixed(1)}</div>
+                                <div class="personnel-stat-label">Avg Rating</div>
+                                <div class="personnel-performance-bar">
+                                    <div class="personnel-performance-fill" 
+                                         style="width: ${(personnel.averagePerformance / 5) * 100}%; 
+                                                background-color: ${personnel.averagePerformance >= 4 ? '#38a169' : 
+                                                                   personnel.averagePerformance >= 3 ? '#d69e2e' : '#e53e3e'};">
+                                    </div>
+                                </div>
+                                <div class="personnel-rating">
+                                    <div class="stars">
+                                        ${getStarsHTML(personnel.averagePerformance)}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="personnel-stat">
+                                <div class="personnel-stat-value">${personnel.averageResponseTime.toFixed(1)}h</div>
+                                <div class="personnel-stat-label">Avg Response Time</div>
+                                <div class="personnel-stat-label" style="margin-top: 5px;">
+                                    <span style="color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
+                                                       personnel.averageResponseTime <= 4 ? '#68d391' : 
+                                                       personnel.averageResponseTime <= 8 ? '#d69e2e' : 
+                                                       personnel.averageResponseTime <= 12 ? '#ed8936' : 
+                                                       personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}; font-weight: 600;">
+                                        ${personnel.averageResponseTime < 1 ? 'Excellent' : 
+                                         personnel.averageResponseTime <= 4 ? 'Very Good' : 
+                                         personnel.averageResponseTime <= 8 ? 'Good' : 
+                                         personnel.averageResponseTime <= 12 ? 'Average' : 
+                                         personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="personnel-chart-mini" id="${chartId}"></div>
+                        
+                        <div class="personnel-tickets">
+                            <div><strong>${personnel.totalTickets}</strong> total tickets handled</div>
+                            <div>Most common update type: ${personnel.primaryUpdateType.substring(0, 30)}${personnel.primaryUpdateType.length > 30 ? '...' : ''}</div>
+                        </div>
+                    </div>
+                `;
+                
+                personnelGrid.innerHTML += cardHTML;
+                
+                // Create mini chart for response times
+                createMiniResponseChart(personnel, chartId);
+                
+                // Add to table
+                const rowHTML = `
+                    <tr>
+                        <td>
+                            <div class="rank ${index < 3 ? `rank-${index + 1}` : ''}">
+                                ${index + 1}
+                            </div>
+                        </td>
+                        <td><strong>${personnel.name}</strong></td>
+                        <td><strong style="font-size: 1.1rem;">${personnel.combinedScore.toFixed(1)}</strong>/10</td>
+                        <td>${personnel.averagePerformance.toFixed(1)}/5</td>
+                        <td>
+                            ${personnel.averageResponseTime.toFixed(1)}h
+                            <div style="font-size: 0.8rem; color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
+                                                                   personnel.averageResponseTime <= 4 ? '#68d391' : 
+                                                                   personnel.averageResponseTime <= 8 ? '#d69e2e' : 
+                                                                   personnel.averageResponseTime <= 12 ? '#ed8936' : 
+                                                                   personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}">
+                                ${personnel.averageResponseTime < 1 ? 'Excellent' : 
+                                 personnel.averageResponseTime <= 4 ? 'Very Good' : 
+                                 personnel.averageResponseTime <= 8 ? 'Good' : 
+                                 personnel.averageResponseTime <= 12 ? 'Average' : 
+                                 personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
+                            </div>
+                        </td>
+                        <td>${personnel.totalTickets}</td>
+                        <td>
+                            <span class="rating-badge ${personnel.performanceCategory.class}">
+                                ${personnel.performanceCategory.label}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                
+                performanceTableBody.innerHTML += rowHTML;
+            });
+        }
+        
+        // Create summary statistics cards
+        function createSummaryStats() {
+            const statsSummary = document.getElementById('statsSummary');
+            
+            const responseCategories = analyticsSummary.responseTimeCategories;
+            const totalWithResponseTime = 
+                responseCategories['Less than 1 hour'].count +
+                responseCategories['Within the day'].count +
+                responseCategories['The next day'].count +
+                responseCategories['More than 2 days'].count;
+            
+            const categoryArray = Object.values(responseCategories);
+            const mostCommonCategory = categoryArray.reduce((prev, current) => 
+                (prev.count > current.count) ? prev : current
+            );
+            
+            const lessThan1HourPercentage = totalWithResponseTime > 0 ? 
+                Math.round((responseCategories['Less than 1 hour'].count / totalWithResponseTime) * 100) : 0;
+            
+            // Count unique personnel
+            const uniquePersonnelCount = Object.keys(personnelPerformance).length;
+            
+            // Calculate average combined score
+            let totalCombinedScore = 0;
+            let personnelWithScores = 0;
+            Object.values(personnelPerformance).forEach(personnel => {
+                if (personnel.combinedScore > 0) {
+                    totalCombinedScore += personnel.combinedScore;
+                    personnelWithScores++;
+                }
+            });
+            const avgCombinedScore = personnelWithScores > 0 ? totalCombinedScore / personnelWithScores : 0;
+            
+            const statsCards = [
+                {
+                    icon: 'fas fa-ticket-alt',
+                    iconColor: '#4a6fa5',
+                    title: 'Total Closed Tickets',
+                    value: analyticsSummary.totalTickets,
+                    subtitle: 'Successfully resolved requests'
+                },
+                {
+                    icon: 'fas fa-user-friends',
+                    iconColor: '#38a169',
+                    title: 'Average Age',
+                    value: analyticsSummary.averageAge,
+                    subtitle: 'Years'
+                },
+                {
+                    icon: 'fas fa-venus-mars',
+                    iconColor: '#d53f8c',
+                    title: 'Sex Ratio',
+                    value: `${analyticsSummary.genderCount.Male}:${analyticsSummary.genderCount.Female}`,
+                    subtitle: 'Male:Female'
+                },
+                {
+                    icon: 'fas fa-user-tie',
+                    iconColor: '#805ad5',
+                    title: 'Active Personnel',
+                    value: uniquePersonnelCount,
+                    subtitle: 'Unique staff members'
+                },
+                {
+                    icon: 'fas fa-chart-line',
+                    iconColor: '#e53e3e',
+                    title: 'Avg Performance Score',
+                    value: avgCombinedScore.toFixed(1),
+                    subtitle: 'Out of 10'
+                },
+                {
+                    icon: 'fas fa-bolt',
+                    iconColor: '#38a169',
+                    title: 'Most Common Response',
+                    value: mostCommonCategory.label.split(' ')[0],
+                    subtitle: `${mostCommonCategory.count} tickets`
+                },
+                {
+                    icon: 'fas fa-percentage',
+                    iconColor: '#4a6fa5',
+                    title: '<1 Hour Response Rate',
+                    value: `${lessThan1HourPercentage}%`,
+                    subtitle: 'Immediate resolution'
+                }
+            ];
+            
+            statsSummary.innerHTML = statsCards.map(card => `
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: ${card.iconColor}20; color: ${card.iconColor};">
+                        <i class="${card.icon}"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>${card.title}</h3>
+                        <div class="stat-value">${card.value}</div>
+                        <div class="stat-subtitle">${card.subtitle}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Create demographics chart (age groups and gender) - OPTION 1: Grouped Bar Chart
+        function createDemographicsChart() {
+            const container = document.getElementById('demographicsChart');
+            container.innerHTML = '';
+            const legend = document.getElementById('demographicsLegend');
+            legend.innerHTML = '';
+            
+            const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = container.clientHeight - margin.top - margin.bottom;
+            
+            const svg = d3.select('#demographicsChart')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Prepare combined age and gender data
+            const ageGenderData = {};
+            
+            closedTicketsData.forEach(ticket => {
+                if (ticket.Age && ticket.Sex) {
+                    const age = parseInt(ticket.Age);
+                    if (!isNaN(age)) {
+                        let ageGroup;
+                        if (age <= 25) ageGroup = '18-25';
+                        else if (age <= 35) ageGroup = '26-35';
+                        else if (age <= 45) ageGroup = '36-45';
+                        else if (age <= 55) ageGroup = '46-55';
+                        else ageGroup = '56+';
+                        
+                        const gender = ticket.Sex.trim().toLowerCase();
+                        const genderKey = (gender === 'male' || gender === 'm') ? 'Male' : 
+                                         (gender === 'female' || gender === 'f') ? 'Female' : 'Other';
+                        
+                        if (!ageGenderData[ageGroup]) {
+                            ageGenderData[ageGroup] = { 'Male': 0, 'Female': 0, 'Other': 0 };
+                        }
+                        
+                        ageGenderData[ageGroup][genderKey] += 1;
+                    }
+                }
+            });
+            
+            // Convert to array format for d3
+            const ageGroups = Object.keys(ageGenderData).sort();
+            const genders = ['Male', 'Female'];
+            
+            const data = [];
+            ageGroups.forEach(ageGroup => {
+                genders.forEach(gender => {
+                    if (ageGenderData[ageGroup][gender] > 0) {
+                        data.push({
+                            ageGroup: ageGroup,
+                            gender: gender,
+                            count: ageGenderData[ageGroup][gender]
+                        });
+                    }
+                });
+            });
+            
+            // X scale for age groups
+            const x0 = d3.scaleBand()
+                .domain(ageGroups)
+                .range([0, width])
+                .padding(0.2);
+            
+            // X scale for genders within each age group
+            const x1 = d3.scaleBand()
+                .domain(genders)
+                .range([0, x0.bandwidth()])
+                .padding(0.05);
+            
+            // Y scale for counts
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.count)])
+                .nice()
+                .range([height, 0]);
+            
+            // Gender colors
+            const genderColors = {
+                'Male': '#2c5282',
+                'Female': '#d53f8c',
+                'Other': '#94a3b8'
+            };
+            
+            // Add X axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x0));
+            
+            // Add Y axis
+            svg.append('g')
+                .call(d3.axisLeft(y));
+            
+            // Add bars for each age group and gender
+            const ageGroupsSelection = svg.selectAll('.age-group')
+                .data(ageGroups)
+                .enter()
+                .append('g')
+                .attr('class', 'age-group')
+                .attr('transform', d => `translate(${x0(d)},0)`);
+            
+            ageGroupsSelection.selectAll('.gender-bar')
+                .data(d => genders.map(gender => ({
+                    ageGroup: d,
+                    gender: gender,
+                    count: ageGenderData[d][gender] || 0
+                })))
+                .enter()
+                .append('rect')
+                .attr('class', 'gender-bar')
+                .attr('x', d => x1(d.gender))
+                .attr('y', d => y(d.count))
+                .attr('width', x1.bandwidth())
+                .attr('height', d => height - y(d.count))
+                .attr('fill', d => genderColors[d.gender])
+                .attr('rx', 3)
+                .attr('ry', 3)
+                .on('mouseover', function(event, d) {
+                    tooltip.transition().duration(200).style('opacity', .9);
+                    tooltip.html(`
+                        <strong>${d.ageGroup} Age Group</strong><br/>
+                        Gender: ${d.gender}<br/>
+                        Tickets: ${d.count}<br/>
+                        Percentage: ${((d.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
+                    `)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 28) + 'px');
+                })
+                .on('mouseout', function() {
+                    tooltip.transition().duration(500).style('opacity', 0);
+                });
+            
+            // Add value labels on bars (only if count > 0 and bar is tall enough)
+            ageGroupsSelection.selectAll('.gender-label')
+                .data(d => genders.map(gender => ({
+                    ageGroup: d,
+                    gender: gender,
+                    count: ageGenderData[d][gender] || 0
+                })))
+                .enter()
+                .append('text')
+                .filter(d => d.count > 0 && (height - y(d.count)) > 20) // Only show if bar is tall enough
+                .attr('class', 'gender-label')
+                .attr('x', d => x1(d.gender) + x1.bandwidth() / 2)
+                .attr('y', d => y(d.count) - 5)
+                .attr('text-anchor', 'middle')
+                .text(d => d.count)
+                .style('font-size', '11px')
+                .style('font-weight', 'bold')
+                .style('fill', d => d.gender === 'Female' ? '#d53f8c' : '#2c5282');
+            
+            // Add X axis label
+            svg.append('text')
+                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .style('text-anchor', 'middle')
+                .text('Age Group')
+                .style('fill', '#64748b');
+            
+            // Add Y axis label
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .text('Number of Tickets')
+                .style('fill', '#64748b');
+            
+            // Create legend for gender
+            const genderData = [
+                { label: 'Male', count: analyticsSummary.genderCount.Male, color: '#2c5282' },
+                { label: 'Female', count: analyticsSummary.genderCount.Female, color: '#d53f8c' }
+            ];
+            
+            legend.innerHTML = genderData.map(item => {
+                const percentage = ((item.count / analyticsSummary.totalTickets) * 100).toFixed(1);
+                return `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: ${item.color};"></div>
+                        <span>${item.label}: ${item.count} tickets (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Create website update type chart (pie chart)
+        function createUpdateTypeChart() {
+            const container = document.getElementById('updateTypeChart');
+            container.innerHTML = '';
+            const legend = document.getElementById('updateTypeLegend');
+            legend.innerHTML = '';
+            
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const radius = Math.min(width, height) / 2 - 20;
+            
+            const svg = d3.select('#updateTypeChart')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height)
+                .append('g')
+                .attr('transform', `translate(${width/2},${height/2})`);
+            
+            // Prepare website update type data
+            const updateTypeData = Object.entries(analyticsSummary.updateTypes)
+                .map(([updateType, count]) => ({ updateType, count }))
+                .sort((a, b) => b.count - a.count);
+            
+            // Limit to top 8 update types for readability
+            const topUpdateTypes = updateTypeData.slice(0, 8);
+            
+            // Create pie layout
+            const pie = d3.pie()
+                .value(d => d.count)
+                .sort(null);
+            
+            // Create arc generator
+            const arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+            
+            // Create outer arc for labels
+            const outerArc = d3.arc()
+                .innerRadius(radius * 1.1)
+                .outerRadius(radius * 1.1);
+            
+            // Generate arcs
+            const arcs = pie(topUpdateTypes);
+            
+            // Color scale for update types
+            const updateTypeColor = d3.scaleOrdinal()
+                .domain(topUpdateTypes.map(d => d.updateType))
+                .range(colorScale.range());
+            
+            // Draw arcs
+            svg.selectAll('path')
+                .data(arcs)
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', d => updateTypeColor(d.data.updateType))
+                .attr('stroke', 'white')
+                .style('stroke-width', '2px')
+                .on('mouseover', function(event, d) {
+                    tooltip.transition().duration(200).style('opacity', .9);
+                    tooltip.html(`
+                        <strong>${d.data.updateType}</strong><br/>
+                        Tickets: ${d.data.count}<br/>
+                        Percentage: ${((d.data.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
+                    `)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 28) + 'px');
+                    
+                    d3.select(this).transition()
+                        .duration(200)
+                        .attr('transform', 'scale(1.05)');
+                })
+                .on('mouseout', function(event, d) {
+                    tooltip.transition().duration(500).style('opacity', 0);
+                    d3.select(this).transition()
+                        .duration(200)
+                        .attr('transform', 'scale(1)');
+                });
+            
+            // Add labels
+            svg.selectAll('text')
+                .data(arcs)
+                .enter()
+                .append('text')
+                .attr('transform', d => {
+                    const pos = outerArc.centroid(d);
+                    return `translate(${pos[0]},${pos[1]})`;
+                })
+                .attr('dy', '.35em')
+                .style('text-anchor', d => {
+                    const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                    return (midangle < Math.PI) ? 'start' : 'end';
+                })
+                .text(d => d.data.updateType)
+                .style('font-size', '12px')
+                .style('fill', '#2c5282')
+                .style('font-weight', 'bold');
+            
+            // Create legend
+            legend.innerHTML = topUpdateTypes.map((item, i) => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: ${updateTypeColor(item.updateType)};"></div>
+                    <span>${item.updateType}: ${item.count}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Create response time chart with text categories from J column
+        function createResponseTimeChart() {
+            const container = document.getElementById('responseTimeChart');
+            container.innerHTML = '';
+            const legend = document.getElementById('responseTimeLegend');
+            legend.innerHTML = '';
+            
+            const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = container.clientHeight - margin.top - margin.bottom;
+            
+            const svg = d3.select('#responseTimeChart')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Prepare response time category data from analytics
+            const responseTimeData = [
+                analyticsSummary.responseTimeCategories['Less than 1 hour'],
+                analyticsSummary.responseTimeCategories['Within the day'],
+                analyticsSummary.responseTimeCategories['The next day'],
+                analyticsSummary.responseTimeCategories['More than 2 days']
+            ];
+            
+            // Category colors
+            const categoryColors = {
+                'Less than 1 hour': '#38a169', // Green
+                'Within the day': '#d69e2e',   // Yellow
+                'The next day': '#ed8936',     // Orange
+                'More than 2 days': '#e53e3e'  // Red
+            };
+            
+            // X scale for categories (using descriptions)
+            const x = d3.scaleBand()
+                .domain(responseTimeData.map(d => d.description))
+                .range([0, width])
+                .padding(0.3);
+            
+            // Y scale for counts
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(responseTimeData, d => d.count)])
+                .nice()
+                .range([height, 0]);
+            
+            // Add X axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+            
+            // Add Y axis
+            svg.append('g')
+                .call(d3.axisLeft(y));
+            
+            // Add bars
+            svg.selectAll('.response-bar')
+                .data(responseTimeData)
+                .enter()
+                .append('rect')
+                .attr('class', 'response-bar')
+                .attr('x', d => x(d.description))
+                .attr('y', d => y(d.count))
+                .attr('width', x.bandwidth())
+                .attr('height', d => height - y(d.count))
+                .attr('fill', d => categoryColors[d.label])
+                .attr('rx', 4)
+                .attr('ry', 4)
+                .on('mouseover', function(event, d) {
+                    tooltip.transition().duration(200).style('opacity', .9);
+                    tooltip.html(`
+                        <strong>${d.label}</strong><br/>
+                        Time Range: ${d.description}<br/>
+                        Tickets: ${d.count}<br/>
+                        Percentage: ${calculateResponseTimePercentage(d.label)}%
+                    `)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 28) + 'px');
+                })
+                .on('mouseout', function() {
+                    tooltip.transition().duration(500).style('opacity', 0);
+                });
+            
+            // Add value labels on bars
+            svg.selectAll('.response-label')
+                .data(responseTimeData)
+                .enter()
+                .append('text')
+                .attr('class', 'response-label')
+                .attr('x', d => x(d.description) + x.bandwidth() / 2)
+                .attr('y', d => y(d.count) - 5)
+                .attr('text-anchor', 'middle')
+                .text(d => d.count)
+                .style('font-weight', 'bold')
+                .style('fill', '#2c5282');
+            
+            // Calculate total tickets with response time
+            const totalResponseTickets = responseTimeData.reduce((sum, d) => sum + d.count, 0);
+            
+            // Calculate average numeric response time for reference line
+            const avgResponseTime = analyticsSummary.responseTimeStats.avg;
+            
+            // Add average response time line (if we have data)
+            if (totalResponseTickets > 0 && avgResponseTime > 0) {
+                svg.append('line')
+                    .attr('x1', 0)
+                    .attr('x2', width)
+                    .attr('y1', y(avgResponseTime))
+                    .attr('y2', y(avgResponseTime))
+                    .attr('stroke', '#2c5282')
+                    .attr('stroke-width', 2)
+                    .attr('stroke-dasharray', '5,5');
+                
+                // Add average label
+                svg.append('text')
+                    .attr('x', width - 5)
+                    .attr('y', y(avgResponseTime) - 5)
+                    .text(`Avg: ${avgResponseTime.toFixed(1)}h`)
+                    .style('font-size', '12px')
+                    .style('fill', '#2c5282')
+                    .style('font-weight', 'bold')
+                    .style('text-anchor', 'end');
+            }
+            
+            // Add X axis label
+            svg.append('text')
+                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .style('text-anchor', 'middle')
+                .text('Response Time Categories')
+                .style('fill', '#64748b');
+            
+            // Add Y axis label
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .text('Number of Tickets')
+                .style('fill', '#64748b');
+            
+            // Add chart title
+            svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', -10)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '14px')
+                .style('font-weight', 'bold')
+                .style('fill', '#4a6fa5')
+                .text('Response Time Distribution by Category');
+            
+            // Calculate percentages for legend
+            function calculateResponseTimePercentage(categoryLabel) {
+                const category = responseTimeData.find(d => d.label === categoryLabel);
+                if (!category || totalResponseTickets === 0) return 0;
+                return ((category.count / totalResponseTickets) * 100).toFixed(1);
+            }
+            
+            // Create detailed legend
+            legend.innerHTML = responseTimeData.map(category => {
+                const percentage = calculateResponseTimePercentage(category.label);
+                return `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: ${categoryColors[category.label]};"></div>
+                        <span>${category.label} (${category.description}): ${category.count} tickets (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add average to legend (if available)
+            if (totalResponseTickets > 0 && avgResponseTime > 0) {
+                legend.innerHTML += `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #2c5282; height: 2px; margin-top: 7px;"></div>
+                        <span>Average Numeric Time: ${avgResponseTime.toFixed(1)} hours</span>
+                    </div>
+                `;
+            }
+        }
+        
+        // Create performance chart
+        function createPerformanceChart() {
+            const container = document.getElementById('performanceChart');
+            container.innerHTML = '';
+            const legend = document.getElementById('performanceLegend');
+            legend.innerHTML = '';
+            
+            const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = container.clientHeight - margin.top - margin.bottom;
+            
+            const svg = d3.select('#performanceChart')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Group performance by rating (rounded to nearest 0.5)
+            const performanceGroups = {};
+            closedTicketsData.forEach(ticket => {
+                if (ticket['Performance Rating'] > 0) {
+                    const rating = Math.round(ticket['Performance Rating'] * 2) / 2; // Round to nearest 0.5
+                    if (!performanceGroups[rating]) {
+                        performanceGroups[rating] = [];
+                    }
+                    performanceGroups[rating].push(ticket);
+                }
+            });
+            
+            // Convert to array
+            const performanceData = Object.entries(performanceGroups)
+                .map(([rating, tickets]) => ({
+                    rating: parseFloat(rating),
+                    count: tickets.length,
+                    tickets: tickets
+                }))
+                .sort((a, b) => a.rating - b.rating);
+            
+            // X scale for ratings
+            const x = d3.scaleBand()
+                .domain(performanceData.map(d => d.rating))
+                .range([0, width])
+                .padding(0.2);
+            
+            // Y scale for counts
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(performanceData, d => d.count)])
+                .nice()
+                .range([height, 0]);
+            
+            // Add X axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x).tickFormat(d => d.toFixed(1)));
+            
+            // Add Y axis
+            svg.append('g')
+                .call(d3.axisLeft(y));
+            
+            // Add bars
+            svg.selectAll('.performance-bar')
+                .data(performanceData)
+                .enter()
+                .append('rect')
+                .attr('class', 'performance-bar')
+                .attr('x', d => x(d.rating))
+                .attr('y', d => y(d.count))
+                .attr('width', x.bandwidth())
+                .attr('height', d => height - y(d.count))
+                .attr('fill', d => {
+                    // Color based on rating (green for high, yellow for medium, red for low)
+                    if (d.rating >= 4) return '#38a169';
+                    if (d.rating >= 3) return '#d69e2e';
+                    return '#e53e3e';
+                })
+                .attr('rx', 4)
+                .attr('ry', 4)
+                .on('mouseover', function(event, d) {
+                    tooltip.transition().duration(200).style('opacity', .9);
+                    tooltip.html(`
+                        <strong>Rating: ${d.rating}/5</strong><br/>
+                        Tickets: ${d.count}<br/>
+                        Percentage: ${((d.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
+                    `)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 28) + 'px');
+                })
+                .on('mouseout', function() {
+                    tooltip.transition().duration(500).style('opacity', 0);
+                });
+            
+            // Add value labels on bars
+            svg.selectAll('.performance-label')
+                .data(performanceData)
+                .enter()
+                .append('text')
+                .attr('class', 'performance-label')
+                .attr('x', d => x(d.rating) + x.bandwidth() / 2)
+                .attr('y', d => y(d.count) - 5)
+                .attr('text-anchor', 'middle')
+                .text(d => d.count)
+                .style('font-weight', 'bold')
+                .style('fill', '#2c5282');
+            
+            // Add average line
+            const avgPerformance = analyticsSummary.performanceStats.avg;
+            svg.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', y(avgPerformance))
+                .attr('y2', y(avgPerformance))
+                .attr('stroke', '#2c5282')
+                .attr('stroke-width', 2)
+                .attr('stroke-dasharray', '5,5');
+            
+            // Add average label
+            svg.append('text')
+                .attr('x', width - 5)
+                .attr('y', y(avgPerformance) - 5)
+                .text(`Avg: ${avgPerformance.toFixed(1)}`)
+                .style('font-size', '12px')
+                .style('fill', '#2c5282')
+                .style('font-weight', 'bold')
+                .style('text-anchor', 'end');
+            
+            // Add X axis label
+            svg.append('text')
+                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .style('text-anchor', 'middle')
+                .text('Performance Rating (1-5 scale)')
+                .style('fill', '#64748b');
+            
+            // Add Y axis label
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .text('Number of Tickets')
+                .style('fill', '#64748b');
+            
+            // Create legend
+            legend.innerHTML = `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #38a169;"></div>
+                    <span>High Performance (4.0+)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #d69e2e;"></div>
+                    <span>Medium Performance (3.0-3.9)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #e53e3e;"></div>
+                    <span>Low Performance (&lt;3.0)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #2c5282; height: 2px; margin-top: 7px;"></div>
+                    <span>Average: ${avgPerformance.toFixed(1)}/5</span>
+                </div>
+            `;
+        }
+        
+        // Create correlation chart (scatter plot)
+        function createCorrelationChart() {
+            const container = document.getElementById('correlationChart');
+            container.innerHTML = '';
+            const legend = document.getElementById('correlationLegend');
+            legend.innerHTML = '';
+            
+            const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = container.clientHeight - margin.top - margin.bottom;
+            
+            const svg = d3.select('#correlationChart')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Prepare correlation data
+            const correlationData = closedTicketsData
+                .filter(ticket => ticket['Response Time'] > 0 && ticket['Performance Rating'] > 0)
+                .map(ticket => ({
+                    responseTime: ticket['Response Time'],
+                    performance: ticket['Performance Rating'],
+                    updateType: ticket['Type of Website Update'] || 'Unknown'
+                }));
+            
+            // X scale for response time
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(correlationData, d => d.responseTime)])
+                .nice()
+                .range([0, width]);
+            
+            // Y scale for performance
+            const y = d3.scaleLinear()
+                .domain([0, 5]) // Performance is 1-5 scale
+                .nice()
+                .range([height, 0]);
+            
+            // Add X axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x).tickFormat(d => d + 'h'));
+            
+            // Add Y axis
+            svg.append('g')
+                .call(d3.axisLeft(y));
+            
+            // Add grid lines
+            svg.append('g')
+                .attr('class', 'grid')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x).tickSize(-height).tickFormat(''));
+            
+            svg.append('g')
+                .attr('class', 'grid')
+                .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));
+            
+            // Add dots
+            svg.selectAll('.correlation-dot')
+                .data(correlationData)
+                .enter()
+                .append('circle')
+                .attr('class', 'correlation-dot')
+                .attr('cx', d => x(d.responseTime))
+                .attr('cy', d => y(d.performance))
+                .attr('r', 6)
+                .attr('fill', d => {
+                    // Color by response time category
+                    if (d.responseTime < 1) return '#38a169';        // <1 hour
+                    if (d.responseTime <= 8) return '#d69e2e';      // 1-8 hours
+                    if (d.responseTime <= 16) return '#ed8936';     // 8-16 hours
+                    return '#e53e3e';                              // >16 hours
+                })
+                .attr('opacity', 0.7)
+                .attr('stroke', 'white')
+                .attr('stroke-width', 1)
+                .on('mouseover', function(event, d) {
+                    tooltip.transition().duration(200).style('opacity', .9);
+                    tooltip.html(`
+                        <strong>Update Type: ${d.updateType}</strong><br/>
+                        Response Time: ${d.responseTime.toFixed(1)} hours<br/>
+                        Performance: ${d.performance.toFixed(1)}/5
+                    `)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 28) + 'px');
+                })
+                .on('mouseout', function() {
+                    tooltip.transition().duration(500).style('opacity', 0);
+                });
+            
+            // Calculate correlation coefficient
+            const correlation = calculateCorrelation(correlationData);
+            
+            // Add correlation line if there's a correlation
+            if (Math.abs(correlation) > 0.1 && correlationData.length > 1) {
+                const regression = linearRegression(correlationData);
+                
+                svg.append('line')
+                    .attr('x1', x(0))
+                    .attr('x2', x(d3.max(correlationData, d => d.responseTime)))
+                    .attr('y1', y(regression.intercept))
+                    .attr('y2', y(regression.intercept + regression.slope * d3.max(correlationData, d => d.responseTime)))
+                    .attr('stroke', '#2c5282')
+                    .attr('stroke-width', 2)
+                    .attr('stroke-dasharray', '5,5');
+            }
+            
+            // Add X axis label
+            svg.append('text')
+                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .style('text-anchor', 'middle')
+                .text('Response Time (hours)')
+                .style('fill', '#64748b');
+            
+            // Add Y axis label
+            svg.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .text('Performance Rating (1-5)')
+                .style('fill', '#64748b');
+            
+            // Add correlation coefficient text
+            svg.append('text')
+                .attr('x', width - 10)
+                .attr('y', 20)
+                .text(`Correlation: ${correlation.toFixed(2)}`)
+                .style('font-size', '14px')
+                .style('fill', '#2c5282')
+                .style('font-weight', 'bold')
+                .style('text-anchor', 'end');
+            
+            // Add response time category legend
+            const responseColors = [
+                { label: '<1 hour', color: '#38a169' },
+                { label: '1-8 hours', color: '#d69e2e' },
+                { label: '8-16 hours', color: '#ed8936' },
+                { label: '>16 hours', color: '#e53e3e' }
+            ];
+            
+            const colorLegend = responseColors.map(item => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: ${item.color};"></div>
+                    <span>${item.label}</span>
+                </div>
+            `).join('');
+            
+            // Create legend
+            legend.innerHTML = `
+                <div class="legend-item">
+                    <span>Each dot represents one closed ticket</span>
+                </div>
+                ${colorLegend}
+                <div class="legend-item">
+                    <span>Correlation coefficient: ${correlation.toFixed(2)}</span>
+                </div>
+                ${Math.abs(correlation) > 0.1 && correlationData.length > 1 ? `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #2c5282; height: 2px; margin-top: 7px;"></div>
+                    <span>Regression line (trend)</span>
+                </div>
+                ` : ''}
+            `;
+        }
+        
+        // Helper function to calculate correlation coefficient
+        function calculateCorrelation(data) {
+            if (data.length < 2) return 0;
+            
+            const n = data.length;
+            const sumX = data.reduce((sum, d) => sum + d.responseTime, 0);
+            const sumY = data.reduce((sum, d) => sum + d.performance, 0);
+            const sumXY = data.reduce((sum, d) => sum + d.responseTime * d.performance, 0);
+            const sumX2 = data.reduce((sum, d) => sum + d.responseTime * d.responseTime, 0);
+            const sumY2 = data.reduce((sum, d) => sum + d.performance * d.performance, 0);
+            
+            const numerator = n * sumXY - sumX * sumY;
+            const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+            
+            return denominator === 0 ? 0 : numerator / denominator;
+        }
+        
+        // Helper function for linear regression
+        function linearRegression(data) {
+            const n = data.length;
+            const sumX = data.reduce((sum, d) => sum + d.responseTime, 0);
+            const sumY = data.reduce((sum, d) => sum + d.performance, 0);
+            const sumXY = data.reduce((sum, d) => sum + d.responseTime * d.performance, 0);
+            const sumX2 = data.reduce((sum, d) => sum + d.responseTime * d.responseTime, 0);
+            
+            const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            const intercept = (sumY - slope * sumX) / n;
+            
+            return { slope, intercept };
+        }
+        
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClosedTicketsData();
+            
+            // Auto-refresh every 10 minutes
+            setInterval(loadClosedTicketsData, 10 * 60 * 1000);
+        });
+    </script>
+</body>
+</html>
