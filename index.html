@@ -6,6 +6,7 @@
     <title>Website Updates Closed Tickets Analytics Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { 
             box-sizing: border-box; 
@@ -44,6 +45,7 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
         
         .dashboard-header p {
@@ -52,6 +54,95 @@
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.6;
+        }
+        
+        /* Date filter controls */
+        .date-filter-container {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .date-filter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-filter-item label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .date-filter-item input {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e0;
+            font-size: 0.95rem;
+            background: white;
+            color: #333;
+        }
+        
+        .date-filter-btn {
+            background: white;
+            color: #2c5282;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .date-filter-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        
+        .date-filter-btn i {
+            font-size: 0.9rem;
+        }
+        
+        /* Quick date range buttons */
+        .quick-date-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-date-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-date-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .quick-date-btn.active {
+            background: white;
+            color: #2c5282;
+            border-color: white;
+            font-weight: 600;
         }
         
         .stats-summary {
@@ -370,13 +461,13 @@
             margin-top: 10px;
         }
         
-        /* Existing chart styles... */
         .chart-card {
             background: white;
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2e8f0;
+            position: relative;
         }
         
         .chart-header {
@@ -400,6 +491,29 @@
         .chart-subtitle {
             color: #64748b;
             font-size: 0.95rem;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .download-btn {
+            background: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #2c5282;
         }
         
         .chart-container {
@@ -495,6 +609,38 @@
             border-top: 1px solid #e2e8f0;
         }
         
+        .data-source-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            margin-left: 10px;
+        }
+        
+        .connection-status.connected {
+            background: #38a169;
+            color: white;
+        }
+        
+        .connection-status.disconnected {
+            background: #e53e3e;
+            color: white;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 1200px) {
             .charts-container {
@@ -540,14 +686,51 @@
                 width: 100%;
                 justify-content: space-between;
             }
+            
+            .date-filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .date-filter-item {
+                width: 100%;
+            }
+            
+            .quick-date-buttons {
+                margin-left: 0;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <div class="dashboard-header">
-            <h1><i class="fas fa-chart-line"></i> Website Updates Analytics Dashboard</h1>
+            <h1>
+                <i class="fas fa-chart-line"></i> Website Updates Analytics Dashboard
+                <span class="connection-status" id="connectionStatus">
+                    <i class="fas fa-circle"></i> Connecting...
+                </span>
+            </h1>
             <p>Comprehensive analysis of resolved Website Updates service requests with insights into personnel performance, response times, and service metrics</p>
+            
+            <!-- Date Filter Controls -->
+            <div class="date-filter-container">
+                <div class="date-filter-item">
+                    <label><i class="fas fa-calendar-alt"></i> Start Date:</label>
+                    <input type="date" id="startDate" value="2025-01-01">
+                </div>
+                <div class="date-filter-item">
+                    <label><i class="fas fa-calendar-alt"></i> End Date:</label>
+                    <input type="date" id="endDate" value="2025-12-31">
+                </div>
+                <div class="quick-date-buttons" id="quickDateButtons">
+                    <!-- Buttons will be generated dynamically -->
+                </div>
+                <button class="date-filter-btn" onclick="loadDataWithDateFilter()">
+                    <i class="fas fa-sync-alt"></i> Apply Filter
+                </button>
+            </div>
         </div>
         
         <div class="stats-summary" id="statsSummary">
@@ -559,6 +742,9 @@
             <div class="personnel-header">
                 <div class="personnel-title">
                     <i class="fas fa-user-tie"></i> Personnel Performance Analytics
+                    <span class="data-source-badge" id="dataSourceBadge">
+                        <i class="fas fa-database"></i> <span id="currentDataSource">Loading...</span>
+                    </span>
                 </div>
                 <div class="personnel-controls">
                     <div>
@@ -624,23 +810,33 @@
         
         <div class="charts-container">
             <!-- Chart 1: Demographics (Age & Gender) -->
-            <div class="chart-card">
+            <div class="chart-card" id="chart-demographics">
                 <div class="chart-header">
                     <div>
                         <div class="chart-title"><i class="fas fa-users"></i> Demographics Overview</div>
                         <div class="chart-subtitle">Age distribution and sex breakdown of talent</div>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="download-btn" onclick="downloadChart('chart-demographics', 'demographics-chart')">
+                            <i class="fas fa-download"></i> PNG
+                        </button>
                     </div>
                 </div>
                 <div class="chart-container" id="demographicsChart"></div>
                 <div class="legend" id="demographicsLegend"></div>
             </div>
             
-            <!-- Chart 2: Regulation Area Distribution -->
-            <div class="chart-card">
+            <!-- Chart 2: Website Update Types -->
+            <div class="chart-card" id="chart-updatetype">
                 <div class="chart-header">
                     <div>
                         <div class="chart-title"><i class="fas fa-sitemap"></i> Website Update Types</div>
                         <div class="chart-subtitle">Distribution of tickets across website update types</div>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="download-btn" onclick="downloadChart('chart-updatetype', 'updatetype-chart')">
+                            <i class="fas fa-download"></i> PNG
+                        </button>
                     </div>
                 </div>
                 <div class="chart-container" id="updateTypeChart"></div>
@@ -648,11 +844,16 @@
             </div>
             
             <!-- Chart 3: Response Time Performance -->
-            <div class="chart-card">
+            <div class="chart-card" id="chart-response">
                 <div class="chart-header">
                     <div>
                         <div class="chart-title"><i class="fas fa-stopwatch"></i> Response Time Analysis</div>
                         <div class="chart-subtitle">Distribution by response time categories</div>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="download-btn" onclick="downloadChart('chart-response', 'response-chart')">
+                            <i class="fas fa-download"></i> PNG
+                        </button>
                     </div>
                 </div>
                 <div class="chart-container" id="responseTimeChart"></div>
@@ -660,11 +861,16 @@
             </div>
             
             <!-- Chart 4: Performance Ratings -->
-            <div class="chart-card">
+            <div class="chart-card" id="chart-performance">
                 <div class="chart-header">
                     <div>
                         <div class="chart-title"><i class="fas fa-star"></i> Performance Ratings</div>
                         <div class="chart-subtitle">Average performance ratings across different categories</div>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="download-btn" onclick="downloadChart('chart-performance', 'performance-chart')">
+                            <i class="fas fa-download"></i> PNG
+                        </button>
                     </div>
                 </div>
                 <div class="chart-container" id="performanceChart"></div>
@@ -672,11 +878,16 @@
             </div>
             
             <!-- Chart 5: Correlation Analysis -->
-            <div class="chart-card">
+            <div class="chart-card" id="chart-correlation">
                 <div class="chart-header">
                     <div>
                         <div class="chart-title"><i class="fas fa-project-diagram"></i> Correlation Analysis</div>
                         <div class="chart-subtitle">Response time vs. performance rating correlation</div>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="download-btn" onclick="downloadChart('chart-correlation', 'correlation-chart')">
+                            <i class="fas fa-download"></i> PNG
+                        </button>
                     </div>
                 </div>
                 <div class="chart-container" id="correlationChart"></div>
@@ -689,7 +900,7 @@
                 <i class="fas fa-spinner fa-spin"></i>
             </div>
             <h2>Loading Website Updates Analytics</h2>
-            <p>Fetching and analyzing data from Google Sheets...</p>
+            <p id="loadingMessage">Connecting to Google Sheets...</p>
         </div>
         
         <div id="error" class="error-message" style="display: none;">
@@ -697,15 +908,15 @@
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
             <h2>Unable to Load Analytics Data</h2>
-            <p id="errorMessage">Please check your connection and try again.</p>
-            <button class="refresh-btn" onclick="loadClosedTicketsData()">
+            <p id="errorMessage">No tickets found for the selected date range or connection failed.</p>
+            <button class="refresh-btn" onclick="loadDataWithDateFilter()">
                 <i class="fas fa-redo-alt"></i> Try Again
             </button>
         </div>
         
         <div class="dashboard-footer">
-            <p>Data Source: Website Updates - Closed Tickets Sheet | Last Updated: <span id="lastUpdated"></span></p>
-            <p>Analytics Dashboard • Auto-refreshes every 10 minutes</p>
+            <p>Data Source: Website Updates - <span id="activeSheet">Loading...</span> | Last Updated: <span id="lastUpdated"></span></p>
+            <p>Analytics Dashboard • Only includes tickets with performance ratings • Filter by date range above</p>
         </div>
     </div>
 
@@ -713,7 +924,23 @@
         // Main data storage
         let closedTicketsData = [];
         let analyticsSummary = {};
-        let personnelPerformance = {}; // Store personnel performance data
+        let personnelPerformance = {};
+        let connectionRetries = 0;
+        const MAX_RETRIES = 3;
+        
+        // Sheet URLs
+        const SHEETS = {
+            closedTickets: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLmIeIOdtDoDMI0WOMYMjsa77L2S-gF9OyL7eyLvbnGJatNeFDHRgiN5qLZPhYEDsUx1wINXebriLT/pub?gid=744987615&single=true&output=csv',
+            archives2025: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLmIeIOdtDoDMI0WOMYMjsa77L2S-gF9OyL7eyLvbnGJatNeFDHRgiN5qLZPhYEDsUx1wINXebriLT/pub?gid=1911930613&single=true&output=csv'
+        };
+        
+        // Multiple CORS proxies for redundancy
+        const CORS_PROXIES = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://proxy.cors.sh/',
+            'https://cors-anywhere.herokuapp.com/'
+        ];
         
         // Response time mapping
         const responseTimeMapping = {
@@ -736,6 +963,98 @@
         const tooltip = d3.select('body').append('div')
             .attr('class', 'tooltip')
             .style('opacity', 0);
+        
+        // Update connection status
+        function updateConnectionStatus(status, message) {
+            const statusEl = document.getElementById('connectionStatus');
+            if (status === 'connected') {
+                statusEl.className = 'connection-status connected';
+                statusEl.innerHTML = '<i class="fas fa-circle"></i> Connected';
+            } else if (status === 'disconnected') {
+                statusEl.className = 'connection-status disconnected';
+                statusEl.innerHTML = '<i class="fas fa-circle"></i> Disconnected';
+            } else {
+                statusEl.className = 'connection-status';
+                statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+            }
+        }
+        
+        // Function to generate quick date buttons dynamically
+        function generateQuickDateButtons() {
+            const container = document.getElementById('quickDateButtons');
+            const currentYear = new Date().getFullYear();
+            
+            // Clear existing buttons
+            container.innerHTML = '';
+            
+            // Add 2025 button (fixed for Archives)
+            const btn2025 = document.createElement('button');
+            btn2025.className = 'quick-date-btn';
+            btn2025.setAttribute('onclick', "setYearRange('2025')");
+            btn2025.innerHTML = '2025';
+            container.appendChild(btn2025);
+            
+            // Add buttons for years from 2026 to current year
+            for (let year = 2026; year <= currentYear; year++) {
+                const btn = document.createElement('button');
+                btn.className = 'quick-date-btn';
+                btn.setAttribute('onclick', `setYearRange('${year}')`);
+                btn.innerHTML = year;
+                container.appendChild(btn);
+            }
+        }
+        
+        // Function to set year range
+        function setYearRange(year) {
+            document.getElementById('startDate').value = `${year}-01-01`;
+            document.getElementById('endDate').value = `${year}-12-31`;
+            
+            // Update active button styling
+            document.querySelectorAll('.quick-date-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerHTML === year) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            loadDataWithDateFilter();
+        }
+        
+        // Function to download chart as PNG
+        function downloadChart(chartId, filename) {
+            const chartElement = document.getElementById(chartId);
+            
+            // Show loading indicator on button
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            button.disabled = true;
+            
+            html2canvas(chartElement, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                allowTaint: true,
+                useCORS: true
+            }).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `${filename}-${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // Restore button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }).catch(error => {
+                console.error('Error downloading chart:', error);
+                alert('Failed to download chart. Please try again.');
+                
+                // Restore button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+        }
         
         // Function to convert response time text to numeric value
         function convertResponseTimeToNumeric(responseTimeText) {
@@ -770,6 +1089,57 @@
             for (const [key, value] of Object.entries(responseTimeMapping)) {
                 if (normalizedText.toLowerCase().includes(key.toLowerCase())) {
                     return value;
+                }
+            }
+            
+            return null;
+        }
+        
+        // Function to parse date from column B with better format handling
+        function parseDate(dateStr) {
+            if (!dateStr || dateStr.trim() === '') return null;
+            
+            // Clean the date string
+            dateStr = dateStr.trim();
+            
+            // Try multiple date formats
+            
+            // Format: MM/DD/YYYY (most common in Google Sheets)
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                const month = parseInt(parts[0]);
+                const day = parseInt(parts[1]);
+                let year = parseInt(parts[2]);
+                
+                // Handle 2-digit years
+                if (year < 100) {
+                    year = year + 2000;
+                }
+                
+                if (!isNaN(month) && !isNaN(day) && !isNaN(year) && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                    return new Date(year, month - 1, day);
+                }
+            }
+            
+            // Format: YYYY-MM-DD
+            const isoParts = dateStr.split('-');
+            if (isoParts.length === 3) {
+                const year = parseInt(isoParts[0]);
+                const month = parseInt(isoParts[1]) - 1;
+                const day = parseInt(isoParts[2]);
+                if (!isNaN(year) && !isNaN(month) && !isNaN(day) && year >= 2000) {
+                    return new Date(year, month, day);
+                }
+            }
+            
+            // Format: DD-MM-YYYY
+            const dashParts = dateStr.split('-');
+            if (dashParts.length === 3) {
+                const day = parseInt(dashParts[0]);
+                const month = parseInt(dashParts[1]) - 1;
+                const year = parseInt(dashParts[2]);
+                if (!isNaN(day) && !isNaN(month) && !isNaN(year) && year >= 2000) {
+                    return new Date(year, month, day);
                 }
             }
             
@@ -887,8 +1257,52 @@
                 .attr('ry', 2);
         }
         
-        // Load data from Google Sheets
-        async function loadClosedTicketsData() {
+        // Improved fetch with retry and multiple proxies
+        async function fetchWithRetry(url, retries = MAX_RETRIES) {
+            let lastError;
+            
+            for (let i = 0; i < retries; i++) {
+                try {
+                    // Try different proxies on each retry
+                    const proxyIndex = i % CORS_PROXIES.length;
+                    const proxyUrl = CORS_PROXIES[proxyIndex] + encodeURIComponent(url);
+                    
+                    console.log(`Attempt ${i + 1} with proxy ${proxyIndex + 1}`);
+                    
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                    
+                    const response = await fetch(proxyUrl, {
+                        signal: controller.signal,
+                        headers: {
+                            'Accept': 'text/csv, text/plain, */*'
+                        }
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const text = await response.text();
+                    if (text && text.length > 0) {
+                        return text;
+                    }
+                    
+                    throw new Error('Empty response');
+                    
+                } catch (error) {
+                    lastError = error;
+                    console.log(`Attempt ${i + 1} failed:`, error.message);
+                    // Wait before retrying (exponential backoff)
+                    await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+                }
+            }
+            
+            throw lastError;
+        }
+        
+        // Load data from appropriate sheet based on date range
+        async function loadDataWithDateFilter() {
             const loading = document.getElementById('loading');
             const error = document.getElementById('error');
             const statsSummary = document.getElementById('statsSummary');
@@ -899,88 +1313,99 @@
             statsSummary.innerHTML = '';
             personnelSection.style.display = 'none';
             
+            updateConnectionStatus('connecting');
+            
+            // Get filter values
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            endDate.setHours(23, 59, 59, 999); // Include the entire end date
+            
+            const startYear = startDate.getFullYear();
+            const endYear = endDate.getFullYear();
+            
+            console.log('Date range:', startDate, 'to', endDate);
+            console.log('Years:', startYear, 'to', endYear);
+            
+            // Determine which sheets to fetch based on date range
+            const sheetsToFetch = [];
+            
+            // Check if range includes 2025
+            if (startYear <= 2025 && endYear >= 2025) {
+                sheetsToFetch.push({ 
+                    name: 'Archives 2025', 
+                    url: SHEETS.archives2025,
+                    type: 'archives'
+                });
+            }
+            
+            // Check if range includes 2026 or later
+            if (endYear >= 2026) {
+                sheetsToFetch.push({ 
+                    name: 'Closed Tickets', 
+                    url: SHEETS.closedTickets,
+                    type: 'closed'
+                });
+            }
+            
+            if (sheetsToFetch.length === 0) {
+                document.getElementById('errorMessage').textContent = 'No data available for the selected date range. Please select 2025 or later.';
+                loading.style.display = 'none';
+                error.style.display = 'flex';
+                updateConnectionStatus('disconnected');
+                return;
+            }
+            
+            // Update loading message
+            document.getElementById('loadingMessage').textContent = 
+                `Fetching data from ${sheetsToFetch.map(s => s.name).join(' and ')}...`;
+            
+            document.getElementById('activeSheet').textContent = sheetsToFetch.map(s => s.name).join(' + ');
+            
             try {
-                // Using the provided Website Updates Closed Ticket sheet URL
-                const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLmIeIOdtDoDMI0WOMYMjsa77L2S-gF9OyL7eyLvbnGJatNeFDHRgiN5qLZPhYEDsUx1wINXebriLT/pub?gid=744987615&single=true&output=csv';
+                let allData = [];
+                let dataSourcesUsed = [];
                 
-                console.log('Loading Website Updates closed tickets from:', sheetUrl);
-                
-                let response;
-                try {
-                    // Try with CORS proxy first
-                    const corsProxy = 'https://api.allorigins.win/raw?url=';
-                    const csvUrl = corsProxy + encodeURIComponent(sheetUrl);
-                    response = await fetch(csvUrl);
-                } catch (proxyError) {
-                    console.log('CORS proxy failed, trying direct access...');
-                    response = await fetch(sheetUrl);
-                }
-                
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
-                const csvText = await response.text();
-                
-                // Parse CSV
-                const rows = csvText.split('\n');
-                closedTicketsData = [];
-                
-                // Parse and filter valid rows
-                for (let i = 1; i < rows.length; i++) {
-                    if (rows[i].trim() === '') continue;
-                    
-                    const cols = parseCSVRow(rows[i]);
-                    
-                    // Check if we have the required columns (A-L)
-                    if (cols.length >= 12) {
-                        // Get personnel name from column I (Service Performed by)
-                        const personnelName = cols[8] || '';
+                // Fetch each required sheet
+                for (const sheet of sheetsToFetch) {
+                    try {
+                        console.log(`Loading ${sheet.name} from:`, sheet.url);
                         
-                        // Get response time text from column J (Response Time)
-                        const responseTimeText = cols[9] || '';
+                        const csvText = await fetchWithRetry(sheet.url);
                         
-                        // Get performance rating from column L
-                        const performanceRating = parseFloat(cols[11]) || 0;
+                        // Parse and filter data from this sheet
+                        const sheetData = parseSheetData(csvText, sheet.name, sheet.type, startDate, endDate);
+                        allData = allData.concat(sheetData);
                         
-                        // SKIP TICKETS WITHOUT RATING (cancelled tickets)
-                        if (performanceRating <= 0) {
-                            continue; // Skip this ticket
+                        if (sheetData.length > 0) {
+                            dataSourcesUsed.push(`${sheet.name} (${sheetData.length} tickets)`);
                         }
                         
-                        // Convert response time text to numeric value
-                        const responseTimeNumeric = convertResponseTimeToNumeric(responseTimeText);
-                        const responseTimeCategory = getResponseTimeCategoryInfo(responseTimeText);
-                        
-                        // Create ticket object with your actual column structure
-                        const ticket = {
-                            'Ticket Number': cols[0] || '',                // Column A
-                            'Date': cols[1] || '',                         // Column B
-                            'Talent Name': cols[2] || '',                  // Column C
-                            'Age': cols[3] || '',                          // Column D
-                            'Sex': cols[4] || '',                          // Column E
-                            'Talent Email': cols[5] || '',                 // Column F
-                            'Type of Website Update': cols[6] || '',       // Column G
-                            'Preferred MIS Personnel': cols[7] || '',      // Column H
-                            'Service performed by': personnelName,         // Column I
-                            'Response Time Text': responseTimeText,        // Column J (text)
-                            'Response Time': responseTimeNumeric,          // Converted numeric value
-                            'Response Time Category': responseTimeCategory, // Category info
-                            'Comments / Feedback': cols[10] || '',         // Column K
-                            'Performance Rating': performanceRating        // Column L
-                        };
-                        
-                        // Only add if we have at least some valid data
-                        if (ticket['Age'] || ticket['Sex'] || ticket['Type of Website Update'] || 
-                            ticket['Response Time'] > 0 || ticket['Performance Rating'] > 0 || 
-                            ticket['Service performed by']) {
-                            closedTicketsData.push(ticket);
-                        }
+                        console.log(`Loaded ${sheetData.length} tickets from ${sheet.name}`);
+                    } catch (sheetError) {
+                        console.error(`Error loading ${sheet.name}:`, sheetError);
+                        // Continue with other sheets even if one fails
                     }
                 }
                 
-                console.log('Loaded', closedTicketsData.length, 'Website Updates closed tickets with ratings');
-                console.log('Sample ticket:', closedTicketsData[0]);
+                console.log('Total loaded tickets:', allData.length);
                 
-                if (closedTicketsData.length > 0) {
+                // Update connection status based on results
+                if (allData.length > 0) {
+                    updateConnectionStatus('connected');
+                } else {
+                    updateConnectionStatus('disconnected');
+                }
+                
+                // Update data source badge
+                if (dataSourcesUsed.length > 0) {
+                    document.getElementById('currentDataSource').textContent = dataSourcesUsed.join(' + ');
+                } else {
+                    document.getElementById('currentDataSource').textContent = 'No tickets found';
+                }
+                
+                if (allData.length > 0) {
+                    closedTicketsData = allData;
+                    
                     // Analyze data
                     analyzeData();
                     
@@ -1006,15 +1431,110 @@
                     personnelSection.style.display = 'block';
                     
                 } else {
-                    throw new Error('No valid Website Updates closed ticket data with ratings found in sheet');
+                    // No tickets found - show error
+                    document.getElementById('errorMessage').textContent = 'No tickets found for the selected date range.';
+                    loading.style.display = 'none';
+                    error.style.display = 'flex';
                 }
                 
             } catch (err) {
-                console.error('Error loading Website Updates closed tickets:', err);
-                document.getElementById('errorMessage').textContent = err.message;
+                console.error('Error loading data:', err);
+                document.getElementById('errorMessage').textContent = 'Failed to connect to Google Sheets. Please check your internet connection and try again.';
                 loading.style.display = 'none';
                 error.style.display = 'flex';
+                updateConnectionStatus('disconnected');
             }
+        }
+        
+        // Parse sheet data and filter by date
+        function parseSheetData(csvText, sheetName, sheetType, startDate, endDate) {
+            const rows = csvText.split('\n');
+            const tickets = [];
+            
+            // Parse and filter valid rows
+            for (let i = 1; i < rows.length; i++) {
+                if (rows[i].trim() === '') continue;
+                
+                const cols = parseCSVRow(rows[i]);
+                
+                // Check if we have the required columns (A-L)
+                if (cols.length >= 12) {
+                    // Get personnel name from column I (Service Performed by)
+                    const personnelName = cols[8] || '';
+                    
+                    // Get response time text from column J (Response Time)
+                    const responseTimeText = cols[9] || '';
+                    
+                    // Get performance rating from column L
+                    const performanceRating = parseFloat(cols[11]) || 0;
+                    
+                    // SKIP TICKETS WITHOUT RATING (cancelled tickets)
+                    if (performanceRating <= 0) {
+                        continue; // Skip this ticket
+                    }
+                    
+                    // Get date from column B (index 1)
+                    const dateStr = cols[1] || '';
+                    const ticketDate = parseDate(dateStr);
+                    
+                    // Check if ticket is within date range
+                    let isInDateRange = false;
+                    
+                    if (ticketDate && !isNaN(ticketDate.getTime())) {
+                        // If we have a valid date, check if it's within range
+                        isInDateRange = ticketDate >= startDate && ticketDate <= endDate;
+                    } else {
+                        // For tickets without dates, include them only if:
+                        // - They're from Archives 2025 sheet AND the date range includes 2025
+                        // - They're from Closed Tickets sheet AND the date range includes 2026+
+                        if (sheetType === 'archives') {
+                            // Archives 2025 tickets without dates are assumed to be from 2025
+                            isInDateRange = (startDate.getFullYear() <= 2025 && endDate.getFullYear() >= 2025);
+                        } else if (sheetType === 'closed') {
+                            // For Closed Tickets without dates, only include if range is 2026 or later
+                            // and assume they're from 2026 (conservative approach)
+                            isInDateRange = (startDate.getFullYear() >= 2026);
+                        }
+                    }
+                    
+                    if (!isInDateRange) {
+                        continue;
+                    }
+                    
+                    // Convert response time text to numeric value
+                    const responseTimeNumeric = convertResponseTimeToNumeric(responseTimeText);
+                    const responseTimeCategory = getResponseTimeCategoryInfo(responseTimeText);
+                    
+                    // Create ticket object with your actual column structure
+                    const ticket = {
+                        'Ticket Number': cols[0] || '',                // Column A
+                        'Date': dateStr,                                // Column B
+                        'Talent Name': cols[2] || '',                  // Column C
+                        'Age': cols[3] || '',                          // Column D
+                        'Sex': cols[4] || '',                          // Column E
+                        'Talent Email': cols[5] || '',                 // Column F
+                        'Type of Website Update': cols[6] || '',       // Column G
+                        'Preferred MIS Personnel': cols[7] || '',      // Column H
+                        'Service performed by': personnelName,         // Column I
+                        'Response Time Text': responseTimeText,        // Column J (text)
+                        'Response Time': responseTimeNumeric,          // Converted numeric value
+                        'Response Time Category': responseTimeCategory, // Category info
+                        'Comments / Feedback': cols[10] || '',         // Column K
+                        'Performance Rating': performanceRating,       // Column L
+                        'ParsedDate': ticketDate,
+                        'SourceSheet': sheetName
+                    };
+                    
+                    // Only add if we have at least some valid data
+                    if (ticket['Age'] || ticket['Sex'] || ticket['Type of Website Update'] || 
+                        ticket['Response Time'] > 0 || ticket['Performance Rating'] > 0 || 
+                        ticket['Service performed by']) {
+                        tickets.push(ticket);
+                    }
+                }
+            }
+            
+            return tickets;
         }
         
         // Parse CSV row with proper handling of quoted fields
@@ -1274,6 +1794,105 @@
             });
             
             console.log('Personnel performance analysis:', personnelPerformance);
+        }
+        
+        // Create summary statistics cards
+        function createSummaryStats() {
+            const statsSummary = document.getElementById('statsSummary');
+            
+            const responseCategories = analyticsSummary.responseTimeCategories;
+            const totalWithResponseTime = 
+                responseCategories['Less than 1 hour'].count +
+                responseCategories['Within the day'].count +
+                responseCategories['The next day'].count +
+                responseCategories['More than 2 days'].count;
+            
+            const categoryArray = Object.values(responseCategories);
+            const mostCommonCategory = categoryArray.reduce((prev, current) => 
+                (prev.count > current.count) ? prev : current
+            );
+            
+            const lessThan1HourPercentage = totalWithResponseTime > 0 ? 
+                Math.round((responseCategories['Less than 1 hour'].count / totalWithResponseTime) * 100) : 0;
+            
+            // Count unique personnel
+            const uniquePersonnelCount = Object.keys(personnelPerformance).length;
+            
+            // Calculate average combined score
+            let totalCombinedScore = 0;
+            let personnelWithScores = 0;
+            Object.values(personnelPerformance).forEach(personnel => {
+                if (personnel.combinedScore > 0) {
+                    totalCombinedScore += personnel.combinedScore;
+                    personnelWithScores++;
+                }
+            });
+            const avgCombinedScore = personnelWithScores > 0 ? totalCombinedScore / personnelWithScores : 0;
+            
+            const statsCards = [
+                {
+                    icon: 'fas fa-ticket-alt',
+                    iconColor: '#4a6fa5',
+                    title: 'Total Closed Tickets',
+                    value: analyticsSummary.totalTickets,
+                    subtitle: 'Successfully resolved requests'
+                },
+                {
+                    icon: 'fas fa-user-friends',
+                    iconColor: '#38a169',
+                    title: 'Average Age',
+                    value: analyticsSummary.averageAge,
+                    subtitle: 'Years'
+                },
+                {
+                    icon: 'fas fa-venus-mars',
+                    iconColor: '#d53f8c',
+                    title: 'Sex Ratio',
+                    value: `${analyticsSummary.genderCount.Male}:${analyticsSummary.genderCount.Female}`,
+                    subtitle: 'Male:Female'
+                },
+                {
+                    icon: 'fas fa-user-tie',
+                    iconColor: '#805ad5',
+                    title: 'Active Personnel',
+                    value: uniquePersonnelCount,
+                    subtitle: 'Unique staff members'
+                },
+                {
+                    icon: 'fas fa-chart-line',
+                    iconColor: '#e53e3e',
+                    title: 'Avg Performance Score',
+                    value: avgCombinedScore.toFixed(1),
+                    subtitle: 'Out of 10'
+                },
+                {
+                    icon: 'fas fa-bolt',
+                    iconColor: '#38a169',
+                    title: 'Most Common Response',
+                    value: mostCommonCategory.label.split(' ')[0],
+                    subtitle: `${mostCommonCategory.count} tickets`
+                },
+                {
+                    icon: 'fas fa-percentage',
+                    iconColor: '#4a6fa5',
+                    title: '<1 Hour Response Rate',
+                    value: `${lessThan1HourPercentage}%`,
+                    subtitle: 'Immediate resolution'
+                }
+            ];
+            
+            statsSummary.innerHTML = statsCards.map(card => `
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: ${card.iconColor}20; color: ${card.iconColor};">
+                        <i class="${card.icon}"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>${card.title}</h3>
+                        <div class="stat-value">${card.value}</div>
+                        <div class="stat-subtitle">${card.subtitle}</div>
+                    </div>
+                </div>
+            `).join('');
         }
         
         // Create personnel performance cards and table
@@ -1617,106 +2236,7 @@
             });
         }
         
-        // Create summary statistics cards
-        function createSummaryStats() {
-            const statsSummary = document.getElementById('statsSummary');
-            
-            const responseCategories = analyticsSummary.responseTimeCategories;
-            const totalWithResponseTime = 
-                responseCategories['Less than 1 hour'].count +
-                responseCategories['Within the day'].count +
-                responseCategories['The next day'].count +
-                responseCategories['More than 2 days'].count;
-            
-            const categoryArray = Object.values(responseCategories);
-            const mostCommonCategory = categoryArray.reduce((prev, current) => 
-                (prev.count > current.count) ? prev : current
-            );
-            
-            const lessThan1HourPercentage = totalWithResponseTime > 0 ? 
-                Math.round((responseCategories['Less than 1 hour'].count / totalWithResponseTime) * 100) : 0;
-            
-            // Count unique personnel
-            const uniquePersonnelCount = Object.keys(personnelPerformance).length;
-            
-            // Calculate average combined score
-            let totalCombinedScore = 0;
-            let personnelWithScores = 0;
-            Object.values(personnelPerformance).forEach(personnel => {
-                if (personnel.combinedScore > 0) {
-                    totalCombinedScore += personnel.combinedScore;
-                    personnelWithScores++;
-                }
-            });
-            const avgCombinedScore = personnelWithScores > 0 ? totalCombinedScore / personnelWithScores : 0;
-            
-            const statsCards = [
-                {
-                    icon: 'fas fa-ticket-alt',
-                    iconColor: '#4a6fa5',
-                    title: 'Total Closed Tickets',
-                    value: analyticsSummary.totalTickets,
-                    subtitle: 'Successfully resolved requests'
-                },
-                {
-                    icon: 'fas fa-user-friends',
-                    iconColor: '#38a169',
-                    title: 'Average Age',
-                    value: analyticsSummary.averageAge,
-                    subtitle: 'Years'
-                },
-                {
-                    icon: 'fas fa-venus-mars',
-                    iconColor: '#d53f8c',
-                    title: 'Sex Ratio',
-                    value: `${analyticsSummary.genderCount.Male}:${analyticsSummary.genderCount.Female}`,
-                    subtitle: 'Male:Female'
-                },
-                {
-                    icon: 'fas fa-user-tie',
-                    iconColor: '#805ad5',
-                    title: 'Active Personnel',
-                    value: uniquePersonnelCount,
-                    subtitle: 'Unique staff members'
-                },
-                {
-                    icon: 'fas fa-chart-line',
-                    iconColor: '#e53e3e',
-                    title: 'Avg Performance Score',
-                    value: avgCombinedScore.toFixed(1),
-                    subtitle: 'Out of 10'
-                },
-                {
-                    icon: 'fas fa-bolt',
-                    iconColor: '#38a169',
-                    title: 'Most Common Response',
-                    value: mostCommonCategory.label.split(' ')[0],
-                    subtitle: `${mostCommonCategory.count} tickets`
-                },
-                {
-                    icon: 'fas fa-percentage',
-                    iconColor: '#4a6fa5',
-                    title: '<1 Hour Response Rate',
-                    value: `${lessThan1HourPercentage}%`,
-                    subtitle: 'Immediate resolution'
-                }
-            ];
-            
-            statsSummary.innerHTML = statsCards.map(card => `
-                <div class="stat-card">
-                    <div class="stat-icon" style="background-color: ${card.iconColor}20; color: ${card.iconColor};">
-                        <i class="${card.icon}"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>${card.title}</h3>
-                        <div class="stat-value">${card.value}</div>
-                        <div class="stat-subtitle">${card.subtitle}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Create demographics chart (age groups and gender) - OPTION 1: Grouped Bar Chart
+        // Create demographics chart (age groups and gender) - Grouped Bar Chart
         function createDemographicsChart() {
             const container = document.getElementById('demographicsChart');
             container.innerHTML = '';
@@ -2556,10 +3076,24 @@
         
         // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            loadClosedTicketsData();
+            // Generate quick date buttons dynamically
+            generateQuickDateButtons();
             
-            // Auto-refresh every 10 minutes
-            setInterval(loadClosedTicketsData, 10 * 60 * 1000);
+            // Set default dates to current year
+            const currentYear = new Date().getFullYear();
+            document.getElementById('startDate').value = `${currentYear}-01-01`;
+            document.getElementById('endDate').value = `${currentYear}-12-31`;
+            
+            // Set active button for current year
+            setTimeout(() => {
+                document.querySelectorAll('.quick-date-btn').forEach(btn => {
+                    if (btn.innerHTML === currentYear.toString()) {
+                        btn.classList.add('active');
+                    }
+                });
+            }, 100);
+            
+            loadDataWithDateFilter();
         });
     </script>
 </body>
