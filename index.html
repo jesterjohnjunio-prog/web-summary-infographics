@@ -8,20 +8,15 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        }
-        
-        body { 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             color: #333;
             padding: 20px;
             min-height: 100vh;
         }
-        
+
         .dashboard-container {
             max-width: 1800px;
             margin: 0 auto;
@@ -30,14 +25,14 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-        
+
         .dashboard-header {
             background: linear-gradient(90deg, #e74c3c, #f1c40f);
             color: white;
             padding: 30px;
             text-align: center;
         }
-        
+
         .dashboard-header h1 {
             font-size: 2.2rem;
             margin-bottom: 10px;
@@ -47,7 +42,7 @@
             gap: 15px;
             flex-wrap: wrap;
         }
-        
+
         .dashboard-header p {
             font-size: 1.1rem;
             opacity: 0.9;
@@ -55,8 +50,7 @@
             margin: 0 auto;
             line-height: 1.6;
         }
-        
-        /* Date filter controls */
+
         .date-filter-container {
             background: rgba(255, 255, 255, 0.15);
             border-radius: 12px;
@@ -70,18 +64,10 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
-        .date-filter-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .date-filter-item label {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        
+
+        .date-filter-item { display: flex; align-items: center; gap: 10px; }
+        .date-filter-item label { font-weight: 600; font-size: 0.95rem; }
+
         .date-filter-item input {
             padding: 8px 12px;
             border-radius: 6px;
@@ -90,7 +76,7 @@
             background: white;
             color: #333;
         }
-        
+
         .date-filter-btn {
             background: white;
             color: #2c5282;
@@ -104,24 +90,12 @@
             gap: 8px;
             transition: all 0.3s;
         }
-        
-        .date-filter-btn:hover {
-            background: #e2e8f0;
-            transform: translateY(-2px);
-        }
-        
-        .date-filter-btn i {
-            font-size: 0.9rem;
-        }
-        
-        /* Quick date range buttons */
-        .quick-date-buttons {
-            display: flex;
-            gap: 10px;
-            margin-left: 10px;
-            flex-wrap: wrap;
-        }
-        
+
+        .date-filter-btn:hover { background: #e2e8f0; transform: translateY(-2px); }
+        .date-filter-btn i { font-size: 0.9rem; }
+
+        .quick-date-buttons { display: flex; gap: 10px; margin-left: 10px; flex-wrap: wrap; }
+
         .quick-date-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -132,19 +106,10 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
-        .quick-date-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .quick-date-btn.active {
-            background: white;
-            color: #2c5282;
-            border-color: white;
-            font-weight: 600;
-        }
-        
+
+        .quick-date-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+        .quick-date-btn.active { background: white; color: #2c5282; border-color: white; font-weight: 600; }
+
         .stats-summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -152,7 +117,7 @@
             padding: 25px;
             background: #f8fafc;
         }
-        
+
         .stat-card {
             background: white;
             border-radius: 12px;
@@ -163,12 +128,9 @@
             gap: 15px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-        
+
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); }
+
         .stat-icon {
             width: 60px;
             height: 60px;
@@ -178,38 +140,20 @@
             justify-content: center;
             font-size: 1.5rem;
         }
-        
-        .stat-content h3 {
-            font-size: 1.1rem;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #2c5282;
-        }
-        
-        .stat-subtitle {
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-        
+
+        .stat-content h3 { font-size: 1.1rem; color: #64748b; margin-bottom: 5px; }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #2c5282; }
+        .stat-subtitle { font-size: 0.9rem; color: #94a3b8; }
+
         .charts-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 25px;
             padding: 25px;
         }
-        
-        /* Personnel Performance Section */
-        .personnel-section {
-            padding: 25px;
-            background: #f8fafc;
-            margin-top: 10px;
-        }
-        
+
+        .personnel-section { padding: 25px; background: #f8fafc; margin-top: 10px; }
+
         .personnel-header {
             display: flex;
             justify-content: space-between;
@@ -218,7 +162,7 @@
             padding-bottom: 15px;
             border-bottom: 2px solid #e2e8f0;
         }
-        
+
         .personnel-title {
             font-size: 1.5rem;
             font-weight: 600;
@@ -227,13 +171,9 @@
             align-items: center;
             gap: 10px;
         }
-        
-        .personnel-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
+
+        .personnel-controls { display: flex; gap: 10px; align-items: center; }
+
         .personnel-filter {
             padding: 8px 15px;
             border: 1px solid #cbd5e0;
@@ -241,13 +181,13 @@
             background: white;
             font-size: 0.9rem;
         }
-        
+
         .personnel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
-        
+
         .personnel-card {
             background: white;
             border-radius: 12px;
@@ -256,12 +196,9 @@
             border: 1px solid #e2e8f0;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
-        .personnel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
+
+        .personnel-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+
         .personnel-card-header {
             display: flex;
             align-items: center;
@@ -270,7 +207,7 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #f1f5f9;
         }
-        
+
         .personnel-avatar {
             width: 50px;
             height: 50px;
@@ -283,44 +220,16 @@
             font-weight: bold;
             font-size: 1.2rem;
         }
-        
-        .personnel-info h3 {
-            font-size: 1.2rem;
-            color: #2c5282;
-            margin-bottom: 5px;
-        }
-        
-        .personnel-info p {
-            font-size: 0.9rem;
-            color: #64748b;
-        }
-        
-        .personnel-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .personnel-stat {
-            text-align: center;
-            padding: 10px;
-            background: #f7fafc;
-            border-radius: 8px;
-        }
-        
-        .personnel-stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2c5282;
-            margin-bottom: 5px;
-        }
-        
-        .personnel-stat-label {
-            font-size: 0.85rem;
-            color: #718096;
-        }
-        
+
+        .personnel-info h3 { font-size: 1.2rem; color: #2c5282; margin-bottom: 5px; }
+        .personnel-info p { font-size: 0.9rem; color: #64748b; }
+
+        .personnel-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+
+        .personnel-stat { text-align: center; padding: 10px; background: #f7fafc; border-radius: 8px; }
+        .personnel-stat-value { font-size: 1.5rem; font-weight: bold; color: #2c5282; margin-bottom: 5px; }
+        .personnel-stat-label { font-size: 0.85rem; color: #718096; }
+
         .personnel-performance-bar {
             height: 8px;
             background: #e2e8f0;
@@ -328,29 +237,12 @@
             overflow: hidden;
             margin-bottom: 5px;
         }
-        
-        .personnel-performance-fill {
-            height: 100%;
-            border-radius: 4px;
-        }
-        
-        .personnel-rating {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .stars {
-            color: #f6ad55;
-            font-size: 0.9rem;
-        }
-        
-        .personnel-chart-mini {
-            height: 60px;
-            margin-top: 15px;
-        }
-        
+
+        .personnel-performance-fill { height: 100%; border-radius: 4px; }
+        .personnel-rating { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: center; }
+        .stars { color: #f6ad55; font-size: 0.9rem; }
+        .personnel-chart-mini { height: 60px; margin-top: 15px; }
+
         .personnel-tickets {
             margin-top: 15px;
             padding-top: 15px;
@@ -358,8 +250,7 @@
             font-size: 0.85rem;
             color: #718096;
         }
-        
-        /* Top Performers Summary */
+
         .top-performers {
             grid-column: 1 / -1;
             background: white;
@@ -367,15 +258,11 @@
             padding: 25px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             margin-top: 20px;
+            overflow-x: auto;
         }
-        
-        .top-performers-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
+
+        .top-performers-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
         .top-performers-title {
             font-size: 1.3rem;
             font-weight: 600;
@@ -384,12 +271,9 @@
             align-items: center;
             gap: 10px;
         }
-        
-        .performance-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
+
+        .performance-table { width: 100%; border-collapse: collapse; }
+
         .performance-table th {
             text-align: left;
             padding: 12px 15px;
@@ -398,16 +282,10 @@
             font-weight: 600;
             border-bottom: 2px solid #e2e8f0;
         }
-        
-        .performance-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #edf2f7;
-        }
-        
-        .performance-table tr:hover {
-            background: #f7fafc;
-        }
-        
+
+        .performance-table td { padding: 12px 15px; border-bottom: 1px solid #edf2f7; }
+        .performance-table tr:hover { background: #f7fafc; }
+
         .rank {
             display: inline-flex;
             align-items: center;
@@ -420,11 +298,11 @@
             font-weight: bold;
             font-size: 0.8rem;
         }
-        
+
         .rank-1 { background: linear-gradient(135deg, #f6e05e, #d69e2e); }
         .rank-2 { background: linear-gradient(135deg, #cbd5e0, #a0aec0); }
         .rank-3 { background: linear-gradient(135deg, #ed8936, #c05621); }
-        
+
         .rating-badge {
             display: inline-flex;
             align-items: center;
@@ -434,13 +312,12 @@
             font-size: 0.85rem;
             font-weight: 600;
         }
-        
+
         .rating-excellent { background: #c6f6d5; color: #22543d; }
         .rating-good { background: #fed7d7; color: #742a2a; }
         .rating-average { background: #feebc8; color: #744210; }
         .rating-poor { background: #e2e8f0; color: #2d3748; }
-        
-        /* Combined Performance Score */
+
         .performance-score {
             display: inline-flex;
             align-items: center;
@@ -453,14 +330,11 @@
             font-weight: bold;
             font-size: 1rem;
             margin-right: 10px;
+            flex-shrink: 0;
         }
-        
-        .score-container {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
+
+        .score-container { display: flex; align-items: center; margin: 10px 0 15px; }
+
         .chart-card {
             background: white;
             border-radius: 15px;
@@ -469,7 +343,7 @@
             border: 1px solid #e2e8f0;
             position: relative;
         }
-        
+
         .chart-header {
             display: flex;
             justify-content: space-between;
@@ -478,7 +352,7 @@
             padding-bottom: 15px;
             border-bottom: 2px solid #f1f5f9;
         }
-        
+
         .chart-title {
             font-size: 1.3rem;
             font-weight: 600;
@@ -487,17 +361,10 @@
             align-items: center;
             gap: 10px;
         }
-        
-        .chart-subtitle {
-            color: #64748b;
-            font-size: 0.95rem;
-        }
-        
-        .chart-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
+
+        .chart-subtitle { color: #64748b; font-size: 0.95rem; }
+        .chart-actions { display: flex; gap: 10px; }
+
         .download-btn {
             background: #4a6fa5;
             color: white;
@@ -511,16 +378,11 @@
             gap: 5px;
             transition: background 0.3s;
         }
-        
-        .download-btn:hover {
-            background: #2c5282;
-        }
-        
-        .chart-container {
-            height: 300px;
-            position: relative;
-        }
-        
+
+        .download-btn:hover { background: #2c5282; }
+
+        .chart-container { height: 300px; position: relative; }
+
         .legend {
             display: flex;
             flex-wrap: wrap;
@@ -529,20 +391,10 @@
             padding-top: 15px;
             border-top: 1px solid #f1f5f9;
         }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .legend-color {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-        }
-        
+
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        .legend-color { width: 15px; height: 15px; border-radius: 3px; }
+
         .tooltip {
             position: absolute;
             background: rgba(0, 0, 0, 0.8);
@@ -555,7 +407,7 @@
             transition: opacity 0.3s;
             z-index: 100;
         }
-        
+
         .loading {
             display: flex;
             flex-direction: column;
@@ -565,13 +417,9 @@
             color: #64748b;
             text-align: center;
         }
-        
-        .loading-spinner {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #4a6fa5;
-        }
-        
+
+        .loading-spinner { font-size: 3rem; margin-bottom: 20px; color: #4a6fa5; }
+
         .error-message {
             display: flex;
             flex-direction: column;
@@ -581,7 +429,7 @@
             color: #e53e3e;
             text-align: center;
         }
-        
+
         .refresh-btn {
             background: #4a6fa5;
             color: white;
@@ -596,11 +444,9 @@
             margin-top: 20px;
             transition: background 0.3s;
         }
-        
-        .refresh-btn:hover {
-            background: #2c5282;
-        }
-        
+
+        .refresh-btn:hover { background: #2c5282; }
+
         .dashboard-footer {
             text-align: center;
             padding: 20px;
@@ -608,9 +454,9 @@
             font-size: 0.9rem;
             border-top: 1px solid #e2e8f0;
         }
-        
+
         .data-source-badge {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(44, 82, 130, 0.1);
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
@@ -619,7 +465,7 @@
             gap: 5px;
             margin-left: 10px;
         }
-        
+
         .connection-status {
             display: inline-flex;
             align-items: center;
@@ -630,76 +476,27 @@
             background: rgba(255, 255, 255, 0.2);
             margin-left: 10px;
         }
-        
-        .connection-status.connected {
-            background: #38a169;
-            color: white;
-        }
-        
-        .connection-status.disconnected {
-            background: #e53e3e;
-            color: white;
-        }
-        
-        /* Responsive adjustments */
+
+        .connection-status.connected { background: #38a169; color: white; }
+        .connection-status.disconnected { background: #e53e3e; color: white; }
+
         @media (max-width: 1200px) {
-            .charts-container {
-                grid-template-columns: 1fr;
-            }
-            .personnel-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            }
+            .charts-container { grid-template-columns: 1fr; }
+            .personnel-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
         }
-        
+
         @media (max-width: 768px) {
-            .dashboard-header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .charts-container {
-                padding: 15px;
-            }
-            
-            .chart-card {
-                padding: 15px;
-            }
-            
-            .chart-container {
-                height: 250px;
-            }
-            
-            .personnel-section {
-                padding: 15px;
-            }
-            
-            .personnel-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .personnel-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .personnel-controls {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .date-filter-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .date-filter-item {
-                width: 100%;
-            }
-            
-            .quick-date-buttons {
-                margin-left: 0;
-                justify-content: center;
-            }
+            .dashboard-header h1 { font-size: 1.8rem; }
+            .charts-container { padding: 15px; grid-template-columns: 1fr; }
+            .chart-card { padding: 15px; }
+            .chart-container { height: 250px; }
+            .personnel-section { padding: 15px; }
+            .personnel-grid { grid-template-columns: 1fr; }
+            .personnel-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .personnel-controls { width: 100%; justify-content: space-between; flex-wrap: wrap; }
+            .date-filter-container { flex-direction: column; align-items: stretch; }
+            .date-filter-item { width: 100%; }
+            .quick-date-buttons { margin-left: 0; justify-content: center; }
         }
     </style>
 </head>
@@ -713,8 +510,7 @@
                 </span>
             </h1>
             <p>Comprehensive analysis of resolved Website Updates service requests with insights into personnel performance, response times, and service metrics</p>
-            
-            <!-- Date Filter Controls -->
+
             <div class="date-filter-container">
                 <div class="date-filter-item">
                     <label><i class="fas fa-calendar-alt"></i> Start Date:</label>
@@ -724,20 +520,15 @@
                     <label><i class="fas fa-calendar-alt"></i> End Date:</label>
                     <input type="date" id="endDate" value="2025-12-31">
                 </div>
-                <div class="quick-date-buttons" id="quickDateButtons">
-                    <!-- Buttons will be generated dynamically -->
-                </div>
+                <div class="quick-date-buttons" id="quickDateButtons"></div>
                 <button class="date-filter-btn" onclick="loadDataWithDateFilter()">
                     <i class="fas fa-sync-alt"></i> Apply Filter
                 </button>
             </div>
         </div>
-        
-        <div class="stats-summary" id="statsSummary">
-            <!-- Stats will be populated by JavaScript -->
-        </div>
-        
-        <!-- Personnel Performance Section -->
+
+        <div class="stats-summary" id="statsSummary"></div>
+
         <div class="personnel-section" id="personnelSection" style="display: none;">
             <div class="personnel-header">
                 <div class="personnel-title">
@@ -774,11 +565,9 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="personnel-grid" id="personnelGrid">
-                <!-- Personnel cards will be populated by JavaScript -->
-            </div>
-            
+
+            <div class="personnel-grid" id="personnelGrid"></div>
+
             <div class="top-performers" id="topPerformers">
                 <div class="top-performers-header">
                     <div class="top-performers-title">
@@ -788,7 +577,7 @@
                         Showing <span id="personnelCount">0</span> personnel members
                     </div>
                 </div>
-                
+
                 <table class="performance-table" id="performanceTable">
                     <thead>
                         <tr>
@@ -801,15 +590,12 @@
                             <th style="width: 120px;">Performance</th>
                         </tr>
                     </thead>
-                    <tbody id="performanceTableBody">
-                        <!-- Table rows will be populated by JavaScript -->
-                    </tbody>
+                    <tbody id="performanceTableBody"></tbody>
                 </table>
             </div>
         </div>
-        
-        <div class="charts-container">
-            <!-- Chart 1: Demographics (Age & Gender) -->
+
+        <div class="charts-container" id="chartsContainer" style="display: none;">
             <div class="chart-card" id="chart-demographics">
                 <div class="chart-header">
                     <div>
@@ -817,7 +603,7 @@
                         <div class="chart-subtitle">Age distribution and sex breakdown of talent</div>
                     </div>
                     <div class="chart-actions">
-                        <button class="download-btn" onclick="downloadChart('chart-demographics', 'demographics-chart')">
+                        <button class="download-btn" onclick="downloadChart(this, 'chart-demographics', 'demographics-chart')">
                             <i class="fas fa-download"></i> PNG
                         </button>
                     </div>
@@ -825,8 +611,7 @@
                 <div class="chart-container" id="demographicsChart"></div>
                 <div class="legend" id="demographicsLegend"></div>
             </div>
-            
-            <!-- Chart 2: Website Update Types -->
+
             <div class="chart-card" id="chart-updatetype">
                 <div class="chart-header">
                     <div>
@@ -834,7 +619,7 @@
                         <div class="chart-subtitle">Distribution of tickets across website update types</div>
                     </div>
                     <div class="chart-actions">
-                        <button class="download-btn" onclick="downloadChart('chart-updatetype', 'updatetype-chart')">
+                        <button class="download-btn" onclick="downloadChart(this, 'chart-updatetype', 'updatetype-chart')">
                             <i class="fas fa-download"></i> PNG
                         </button>
                     </div>
@@ -842,8 +627,7 @@
                 <div class="chart-container" id="updateTypeChart"></div>
                 <div class="legend" id="updateTypeLegend"></div>
             </div>
-            
-            <!-- Chart 3: Response Time Performance -->
+
             <div class="chart-card" id="chart-response">
                 <div class="chart-header">
                     <div>
@@ -851,7 +635,7 @@
                         <div class="chart-subtitle">Distribution by response time categories</div>
                     </div>
                     <div class="chart-actions">
-                        <button class="download-btn" onclick="downloadChart('chart-response', 'response-chart')">
+                        <button class="download-btn" onclick="downloadChart(this, 'chart-response', 'response-chart')">
                             <i class="fas fa-download"></i> PNG
                         </button>
                     </div>
@@ -859,8 +643,7 @@
                 <div class="chart-container" id="responseTimeChart"></div>
                 <div class="legend" id="responseTimeLegend"></div>
             </div>
-            
-            <!-- Chart 4: Performance Ratings -->
+
             <div class="chart-card" id="chart-performance">
                 <div class="chart-header">
                     <div>
@@ -868,7 +651,7 @@
                         <div class="chart-subtitle">Average performance ratings across different categories</div>
                     </div>
                     <div class="chart-actions">
-                        <button class="download-btn" onclick="downloadChart('chart-performance', 'performance-chart')">
+                        <button class="download-btn" onclick="downloadChart(this, 'chart-performance', 'performance-chart')">
                             <i class="fas fa-download"></i> PNG
                         </button>
                     </div>
@@ -876,8 +659,7 @@
                 <div class="chart-container" id="performanceChart"></div>
                 <div class="legend" id="performanceLegend"></div>
             </div>
-            
-            <!-- Chart 5: Correlation Analysis -->
+
             <div class="chart-card" id="chart-correlation">
                 <div class="chart-header">
                     <div>
@@ -885,7 +667,7 @@
                         <div class="chart-subtitle">Response time vs. performance rating correlation</div>
                     </div>
                     <div class="chart-actions">
-                        <button class="download-btn" onclick="downloadChart('chart-correlation', 'correlation-chart')">
+                        <button class="download-btn" onclick="downloadChart(this, 'chart-correlation', 'correlation-chart')">
                             <i class="fas fa-download"></i> PNG
                         </button>
                     </div>
@@ -894,26 +676,22 @@
                 <div class="legend" id="correlationLegend"></div>
             </div>
         </div>
-        
+
         <div id="loading" class="loading">
-            <div class="loading-spinner">
-                <i class="fas fa-spinner fa-spin"></i>
-            </div>
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
             <h2>Loading Website Updates Analytics</h2>
             <p id="loadingMessage">Connecting to Google Sheets...</p>
         </div>
-        
+
         <div id="error" class="error-message" style="display: none;">
-            <div style="font-size: 3rem; margin-bottom: 20px;">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
+            <div style="font-size: 3rem; margin-bottom: 20px;"><i class="fas fa-exclamation-triangle"></i></div>
             <h2>Unable to Load Analytics Data</h2>
             <p id="errorMessage">No tickets found for the selected date range or connection failed.</p>
             <button class="refresh-btn" onclick="loadDataWithDateFilter()">
                 <i class="fas fa-redo-alt"></i> Try Again
             </button>
         </div>
-        
+
         <div class="dashboard-footer">
             <p>Data Source: Website Updates - <span id="activeSheet">Loading...</span> | Last Updated: <span id="lastUpdated"></span></p>
             <p>Analytics Dashboard • Only includes tickets with performance ratings • Filter by date range above</p>
@@ -921,28 +699,25 @@
     </div>
 
     <script>
-        // Main data storage
+        // ==================== STATE ====================
         let closedTicketsData = [];
         let analyticsSummary = {};
         let personnelPerformance = {};
-        let connectionRetries = 0;
-        const MAX_RETRIES = 3;
-        
-        // Sheet URLs
+
+        // ==================== CONFIG ====================
         const SHEETS = {
             closedTickets: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLmIeIOdtDoDMI0WOMYMjsa77L2S-gF9OyL7eyLvbnGJatNeFDHRgiN5qLZPhYEDsUx1wINXebriLT/pub?gid=744987615&single=true&output=csv',
             archives2025: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLmIeIOdtDoDMI0WOMYMjsa77L2S-gF9OyL7eyLvbnGJatNeFDHRgiN5qLZPhYEDsUx1wINXebriLT/pub?gid=1911930613&single=true&output=csv'
         };
-        
-        // Multiple CORS proxies for redundancy
+
+        // '' = direct fetch (published Google Sheets CSVs allow cross-origin requests).
+        // Proxies are only used as fallbacks if the direct fetch fails.
         const CORS_PROXIES = [
+            '',
             'https://api.allorigins.win/raw?url=',
-            'https://corsproxy.io/?',
-            'https://proxy.cors.sh/',
-            'https://cors-anywhere.herokuapp.com/'
+            'https://corsproxy.io/?url='
         ];
-        
-        // Response time mapping
+
         const responseTimeMapping = {
             'Less than one (1) hour': { numericValue: 0.5, label: 'Less than 1 hour', description: '<1 hr' },
             'Within the day': { numericValue: 4.5, label: 'Within the day', description: '1-8 hrs' },
@@ -954,18 +729,27 @@
             'More than 2 days': { numericValue: 24, label: 'More than 2 days', description: '>16 hrs' },
             'More than two days': { numericValue: 24, label: 'More than 2 days', description: '>16 hrs' }
         };
-        
-        // Color scales
+
         const colorScale = d3.scaleOrdinal()
             .range(['#4a6fa5', '#2c5282', '#38a169', '#d69e2e', '#e53e3e', '#805ad5', '#dd6b20', '#319795']);
-        
-        // Tooltip element
+
         const tooltip = d3.select('body').append('div')
             .attr('class', 'tooltip')
             .style('opacity', 0);
-        
-        // Update connection status
-        function updateConnectionStatus(status, message) {
+
+        function showTooltip(event, html) {
+            tooltip.transition().duration(200).style('opacity', .9);
+            tooltip.html(html)
+                .style('left', (event.pageX + 10) + 'px')
+                .style('top', (event.pageY - 28) + 'px');
+        }
+
+        function hideTooltip() {
+            tooltip.transition().duration(500).style('opacity', 0);
+        }
+
+        // ==================== UI HELPERS ====================
+        function updateConnectionStatus(status) {
             const statusEl = document.getElementById('connectionStatus');
             if (status === 'connected') {
                 statusEl.className = 'connection-status connected';
@@ -978,58 +762,43 @@
                 statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
             }
         }
-        
-        // Function to generate quick date buttons dynamically
+
         function generateQuickDateButtons() {
             const container = document.getElementById('quickDateButtons');
             const currentYear = new Date().getFullYear();
-            
-            // Clear existing buttons
             container.innerHTML = '';
-            
-            // Add 2025 button (fixed for Archives)
-            const btn2025 = document.createElement('button');
-            btn2025.className = 'quick-date-btn';
-            btn2025.setAttribute('onclick', "setYearRange('2025')");
-            btn2025.innerHTML = '2025';
-            container.appendChild(btn2025);
-            
-            // Add buttons for years from 2026 to current year
-            for (let year = 2026; year <= currentYear; year++) {
+
+            const addButton = (year) => {
                 const btn = document.createElement('button');
                 btn.className = 'quick-date-btn';
-                btn.setAttribute('onclick', `setYearRange('${year}')`);
-                btn.innerHTML = year;
+                btn.textContent = year;
+                btn.addEventListener('click', () => setYearRange(String(year)));
                 container.appendChild(btn);
-            }
+            };
+
+            addButton(2025);
+            for (let year = 2026; year <= currentYear; year++) addButton(year);
         }
-        
-        // Function to set year range
+
+        function setActiveYearButton(year) {
+            document.querySelectorAll('.quick-date-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === String(year));
+            });
+        }
+
         function setYearRange(year) {
             document.getElementById('startDate').value = `${year}-01-01`;
             document.getElementById('endDate').value = `${year}-12-31`;
-            
-            // Update active button styling
-            document.querySelectorAll('.quick-date-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.innerHTML === year) {
-                    btn.classList.add('active');
-                }
-            });
-            
+            setActiveYearButton(year);
             loadDataWithDateFilter();
         }
-        
-        // Function to download chart as PNG
-        function downloadChart(chartId, filename) {
+
+        function downloadChart(button, chartId, filename) {
             const chartElement = document.getElementById(chartId);
-            
-            // Show loading indicator on button
-            const button = event.target.closest('button');
             const originalText = button.innerHTML;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
             button.disabled = true;
-            
+
             html2canvas(chartElement, {
                 scale: 2,
                 backgroundColor: '#ffffff',
@@ -1037,126 +806,103 @@
                 allowTaint: true,
                 useCORS: true
             }).then(canvas => {
-                // Create download link
                 const link = document.createElement('a');
                 link.download = `${filename}-${new Date().toISOString().split('T')[0]}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
-                // Restore button
-                button.innerHTML = originalText;
-                button.disabled = false;
             }).catch(error => {
                 console.error('Error downloading chart:', error);
                 alert('Failed to download chart. Please try again.');
-                
-                // Restore button
+            }).finally(() => {
                 button.innerHTML = originalText;
                 button.disabled = false;
             });
         }
-        
-        // Function to convert response time text to numeric value
-        function convertResponseTimeToNumeric(responseTimeText) {
-            if (!responseTimeText) return 0;
-            
-            const normalizedText = responseTimeText.trim();
-            
-            if (responseTimeMapping[normalizedText]) {
-                return responseTimeMapping[normalizedText].numericValue;
-            }
-            
-            for (const [key, value] of Object.entries(responseTimeMapping)) {
-                if (normalizedText.toLowerCase().includes(key.toLowerCase())) {
-                    return value.numericValue;
-                }
-            }
-            
-            console.log('Unknown response time category:', normalizedText);
-            return 0;
-        }
-        
-        // Function to get response time category info
+
+        // ==================== PARSING HELPERS ====================
         function getResponseTimeCategoryInfo(responseTimeText) {
             if (!responseTimeText) return null;
-            
             const normalizedText = responseTimeText.trim();
-            
-            if (responseTimeMapping[normalizedText]) {
-                return responseTimeMapping[normalizedText];
-            }
-            
+
+            if (responseTimeMapping[normalizedText]) return responseTimeMapping[normalizedText];
+
             for (const [key, value] of Object.entries(responseTimeMapping)) {
-                if (normalizedText.toLowerCase().includes(key.toLowerCase())) {
-                    return value;
-                }
+                if (normalizedText.toLowerCase().includes(key.toLowerCase())) return value;
             }
-            
+            if (normalizedText) console.log('Unknown response time category:', normalizedText);
             return null;
         }
-        
-        // Function to parse date from column B with better format handling
+
+        function convertResponseTimeToNumeric(responseTimeText) {
+            const info = getResponseTimeCategoryInfo(responseTimeText);
+            return info ? info.numericValue : 0;
+        }
+
+        // Parse a date string as a LOCAL date (avoids UTC offset issues in PH time)
         function parseDate(dateStr) {
             if (!dateStr || dateStr.trim() === '') return null;
-            
-            // Clean the date string
             dateStr = dateStr.trim();
-            
-            // Try multiple date formats
-            
-            // Format: MM/DD/YYYY (most common in Google Sheets)
+
+            // MM/DD/YYYY (optionally with a time after it)
             const parts = dateStr.split('/');
             if (parts.length === 3) {
                 const month = parseInt(parts[0]);
                 const day = parseInt(parts[1]);
                 let year = parseInt(parts[2]);
-                
-                // Handle 2-digit years
-                if (year < 100) {
-                    year = year + 2000;
-                }
-                
+                if (year < 100) year += 2000;
                 if (!isNaN(month) && !isNaN(day) && !isNaN(year) && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
                     return new Date(year, month - 1, day);
                 }
             }
-            
-            // Format: YYYY-MM-DD
-            const isoParts = dateStr.split('-');
-            if (isoParts.length === 3) {
-                const year = parseInt(isoParts[0]);
-                const month = parseInt(isoParts[1]) - 1;
-                const day = parseInt(isoParts[2]);
-                if (!isNaN(year) && !isNaN(month) && !isNaN(day) && year >= 2000) {
-                    return new Date(year, month, day);
-                }
-            }
-            
-            // Format: DD-MM-YYYY
+
+            // YYYY-MM-DD or DD-MM-YYYY
             const dashParts = dateStr.split('-');
             if (dashParts.length === 3) {
-                const day = parseInt(dashParts[0]);
-                const month = parseInt(dashParts[1]) - 1;
-                const year = parseInt(dashParts[2]);
-                if (!isNaN(day) && !isNaN(month) && !isNaN(year) && year >= 2000) {
-                    return new Date(year, month, day);
+                const a = parseInt(dashParts[0]);
+                const b = parseInt(dashParts[1]);
+                const c = parseInt(dashParts[2]);
+                if (!isNaN(a) && !isNaN(b) && !isNaN(c)) {
+                    if (a >= 2000) return new Date(a, b - 1, c);   // YYYY-MM-DD
+                    if (c >= 2000) return new Date(c, b - 1, a);   // DD-MM-YYYY
                 }
             }
-            
-            return null;
+
+            // Last resort: let the browser try (e.g. "September 15, 2026")
+            const fallback = new Date(dateStr);
+            return isNaN(fallback.getTime()) ? null : fallback;
         }
-        
-        // Function to get initials from name
+
+        // Read a yyyy-mm-dd input value as a local date
+        function getInputDate(inputId, endOfDay) {
+            const value = document.getElementById(inputId).value;
+            if (!value) return null;
+            const [y, m, d] = value.split('-').map(Number);
+            return endOfDay ? new Date(y, m - 1, d, 23, 59, 59, 999) : new Date(y, m - 1, d);
+        }
+
+        // Split "Leo James Abaloyan, Jester John Junio" into separate names
+        function splitPersonnelNames(rawName) {
+            if (!rawName) return [];
+            const names = rawName
+                .split(/\s*(?:,|;|\/|&|\band\b)\s*/i)
+                .map(n => n.replace(/\s+/g, ' ').trim())
+                .filter(n => n.length > 0);
+            return [...new Set(names)];
+        }
+
         function getInitials(name) {
             if (!name) return '?';
-            const parts = name.split(' ');
-            if (parts.length >= 2) {
-                return (parts[0][0] + parts[1][0]).toUpperCase();
-            }
+            const parts = name.split(' ').filter(Boolean);
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
             return name.substring(0, 2).toUpperCase();
         }
-        
-        // Function to get performance category based on COMBINED SCORE
+
+        function escapeHTML(str) {
+            return String(str ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
         function getPerformanceCategory(combinedScore) {
             if (combinedScore >= 8.0) return { label: 'Excellent', class: 'rating-excellent', stars: 5 };
             if (combinedScore >= 6.0) return { label: 'Good', class: 'rating-good', stars: 4 };
@@ -1164,189 +910,110 @@
             if (combinedScore >= 2.0) return { label: 'Below Average', class: 'rating-poor', stars: 2 };
             return { label: 'Poor', class: 'rating-poor', stars: 1 };
         }
-        
-        // Function to get stars HTML
+
         function getStarsHTML(rating) {
             const fullStars = Math.floor(rating);
             const halfStar = rating % 1 >= 0.5;
             const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-            
-            let starsHTML = '';
-            for (let i = 0; i < fullStars; i++) {
-                starsHTML += '<i class="fas fa-star"></i>';
-            }
-            if (halfStar) {
-                starsHTML += '<i class="fas fa-star-half-alt"></i>';
-            }
-            for (let i = 0; i < emptyStars; i++) {
-                starsHTML += '<i class="far fa-star"></i>';
-            }
-            return starsHTML;
+            return '<i class="fas fa-star"></i>'.repeat(fullStars) +
+                   (halfStar ? '<i class="fas fa-star-half-alt"></i>' : '') +
+                   '<i class="far fa-star"></i>'.repeat(Math.max(0, emptyStars));
         }
-        
-        // Calculate combined performance score (higher is better)
+
+        function getResponseColor(hours) {
+            if (hours < 1) return '#38a169';
+            if (hours <= 4) return '#68d391';
+            if (hours <= 8) return '#d69e2e';
+            if (hours <= 12) return '#ed8936';
+            if (hours <= 16) return '#dd6b20';
+            return '#e53e3e';
+        }
+
+        function getResponseLabel(hours) {
+            if (hours < 1) return 'Excellent';
+            if (hours <= 4) return 'Very Good';
+            if (hours <= 8) return 'Good';
+            if (hours <= 12) return 'Average';
+            if (hours <= 16) return 'Below Avg';
+            return 'Poor';
+        }
+
+        // Combined score (0-10): 60% rating, 40% response speed
         function calculateCombinedScore(averagePerformance, averageResponseTime) {
-            // Performance rating component (0-5 scale, converted to 0-5 points)
             const performanceScore = averagePerformance;
-            
-            // Response time component (lower is better, converted to 0-5 points)
-            // Scale: 0 hours = 5 points, 24+ hours = 0 points
             let responseScore = 0;
             if (averageResponseTime > 0) {
-                // Inverse relationship: lower response time = higher score
-                responseScore = Math.max(0, 5 - (averageResponseTime / 5));
-                // Cap the response score at 5
-                responseScore = Math.min(5, responseScore);
+                responseScore = Math.min(5, Math.max(0, 5 - (averageResponseTime / 5)));
             }
-            
-            // Combined score (weighted average)
-            // Performance weight: 60%, Response time weight: 40%
             const combinedScore = (performanceScore * 0.6) + (responseScore * 0.4);
-            
             return {
-                combinedScore: Math.min(10, combinedScore * 2), // Scale to 0-10
-                performanceScore: performanceScore,
-                responseScore: responseScore
+                combinedScore: Math.min(10, combinedScore * 2),
+                performanceScore,
+                responseScore
             };
         }
-        
-        // Function to create mini chart for personnel response times
-        function createMiniResponseChart(personnelData, containerId) {
-            const container = document.getElementById(containerId);
-            if (!container || !personnelData.responseTimes || personnelData.responseTimes.length === 0) return;
-            
-            const width = 200;
-            const height = 40;
-            const margin = { top: 5, right: 5, bottom: 5, left: 5 };
-            
-            const svg = d3.select(`#${containerId}`)
-                .append('svg')
-                .attr('width', width)
-                .attr('height', height);
-            
-            const responseTimes = personnelData.responseTimes.slice(-6); // Last 6 response times
-            
-            const x = d3.scaleBand()
-                .domain(responseTimes.map((d, i) => i))
-                .range([margin.left, width - margin.right])
-                .padding(0.2);
-            
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(responseTimes)])
-                .nice()
-                .range([height - margin.bottom, margin.top]);
-            
-            svg.selectAll('.mini-bar')
-                .data(responseTimes)
-                .enter()
-                .append('rect')
-                .attr('class', 'mini-bar')
-                .attr('x', (d, i) => x(i))
-                .attr('y', d => y(d))
-                .attr('width', x.bandwidth())
-                .attr('height', d => height - margin.bottom - y(d))
-                .attr('fill', d => {
-                    if (d < 1) return '#38a169';        // Excellent: <1 hour
-                    if (d <= 4) return '#68d391';      // Very Good: 1-4 hours
-                    if (d <= 8) return '#d69e2e';      // Good: 4-8 hours
-                    if (d <= 12) return '#ed8936';     // Average: 8-12 hours
-                    if (d <= 16) return '#dd6b20';     // Below Average: 12-16 hours
-                    return '#e53e3e';                  // Poor: >16 hours
-                })
-                .attr('rx', 2)
-                .attr('ry', 2);
-        }
-        
-        // Improved fetch with retry and multiple proxies
-        async function fetchWithRetry(url, retries = MAX_RETRIES) {
+
+        // ==================== DATA LOADING ====================
+        async function fetchWithRetry(url) {
             let lastError;
-            
-            for (let i = 0; i < retries; i++) {
+            for (let i = 0; i < CORS_PROXIES.length; i++) {
+                const proxy = CORS_PROXIES[i];
+                const target = proxy ? proxy + encodeURIComponent(url) : url;
                 try {
-                    // Try different proxies on each retry
-                    const proxyIndex = i % CORS_PROXIES.length;
-                    const proxyUrl = CORS_PROXIES[proxyIndex] + encodeURIComponent(url);
-                    
-                    console.log(`Attempt ${i + 1} with proxy ${proxyIndex + 1}`);
-                    
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-                    
-                    const response = await fetch(proxyUrl, {
-                        signal: controller.signal,
-                        headers: {
-                            'Accept': 'text/csv, text/plain, */*'
-                        }
-                    });
-                    
+                    const timeoutId = setTimeout(() => controller.abort(), 15000);
+                    const response = await fetch(target, { signal: controller.signal, cache: 'no-store' });
                     clearTimeout(timeoutId);
-                    
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    
+
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const text = await response.text();
-                    if (text && text.length > 0) {
-                        return text;
-                    }
-                    
-                    throw new Error('Empty response');
-                    
+                    // Proxies sometimes return an HTML error page with status 200
+                    if (!text || text.trim().startsWith('<')) throw new Error('Received HTML instead of CSV');
+                    return text;
                 } catch (error) {
                     lastError = error;
-                    console.log(`Attempt ${i + 1} failed:`, error.message);
-                    // Wait before retrying (exponential backoff)
-                    await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+                    console.warn(`Fetch via ${proxy || 'direct'} failed:`, error.message);
                 }
             }
-            
             throw lastError;
         }
-        
-        // Load data from appropriate sheet based on date range
+
         async function loadDataWithDateFilter() {
             const loading = document.getElementById('loading');
             const error = document.getElementById('error');
             const statsSummary = document.getElementById('statsSummary');
             const personnelSection = document.getElementById('personnelSection');
-            
+            const chartsContainer = document.getElementById('chartsContainer');
+
             loading.style.display = 'flex';
             error.style.display = 'none';
             statsSummary.innerHTML = '';
             personnelSection.style.display = 'none';
-            
+            chartsContainer.style.display = 'none';
             updateConnectionStatus('connecting');
-            
-            // Get filter values
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
-            endDate.setHours(23, 59, 59, 999); // Include the entire end date
-            
+
+            const startDate = getInputDate('startDate', false);
+            const endDate = getInputDate('endDate', true);
+
+            if (!startDate || !endDate || startDate > endDate) {
+                document.getElementById('errorMessage').textContent = 'Please select a valid start and end date.';
+                loading.style.display = 'none';
+                error.style.display = 'flex';
+                updateConnectionStatus('disconnected');
+                return;
+            }
+
             const startYear = startDate.getFullYear();
             const endYear = endDate.getFullYear();
-            
-            console.log('Date range:', startDate, 'to', endDate);
-            console.log('Years:', startYear, 'to', endYear);
-            
-            // Determine which sheets to fetch based on date range
+
             const sheetsToFetch = [];
-            
-            // Check if range includes 2025
             if (startYear <= 2025 && endYear >= 2025) {
-                sheetsToFetch.push({ 
-                    name: 'Archives 2025', 
-                    url: SHEETS.archives2025,
-                    type: 'archives'
-                });
+                sheetsToFetch.push({ name: 'Archives 2025', url: SHEETS.archives2025, type: 'archives' });
             }
-            
-            // Check if range includes 2026 or later
             if (endYear >= 2026) {
-                sheetsToFetch.push({ 
-                    name: 'Closed Tickets', 
-                    url: SHEETS.closedTickets,
-                    type: 'closed'
-                });
+                sheetsToFetch.push({ name: 'Closed Tickets', url: SHEETS.closedTickets, type: 'closed' });
             }
-            
+
             if (sheetsToFetch.length === 0) {
                 document.getElementById('errorMessage').textContent = 'No data available for the selected date range. Please select 2025 or later.';
                 loading.style.display = 'none';
@@ -1354,533 +1021,344 @@
                 updateConnectionStatus('disconnected');
                 return;
             }
-            
-            // Update loading message
-            document.getElementById('loadingMessage').textContent = 
+
+            document.getElementById('loadingMessage').textContent =
                 `Fetching data from ${sheetsToFetch.map(s => s.name).join(' and ')}...`;
-            
             document.getElementById('activeSheet').textContent = sheetsToFetch.map(s => s.name).join(' + ');
-            
+
             try {
                 let allData = [];
-                let dataSourcesUsed = [];
-                
-                // Fetch each required sheet
+                const dataSourcesUsed = [];
+                const failedSheets = [];
+
                 for (const sheet of sheetsToFetch) {
                     try {
-                        console.log(`Loading ${sheet.name} from:`, sheet.url);
-                        
                         const csvText = await fetchWithRetry(sheet.url);
-                        
-                        // Parse and filter data from this sheet
                         const sheetData = parseSheetData(csvText, sheet.name, sheet.type, startDate, endDate);
                         allData = allData.concat(sheetData);
-                        
                         if (sheetData.length > 0) {
                             dataSourcesUsed.push(`${sheet.name} (${sheetData.length} tickets)`);
                         }
-                        
                         console.log(`Loaded ${sheetData.length} tickets from ${sheet.name}`);
                     } catch (sheetError) {
                         console.error(`Error loading ${sheet.name}:`, sheetError);
-                        // Continue with other sheets even if one fails
+                        failedSheets.push(`${sheet.name}: ${sheetError.message}`);
                     }
                 }
-                
-                console.log('Total loaded tickets:', allData.length);
-                
-                // Update connection status based on results
-                if (allData.length > 0) {
-                    updateConnectionStatus('connected');
-                } else {
-                    updateConnectionStatus('disconnected');
+
+                // Every sheet failed = connection problem, not an empty date range
+                if (failedSheets.length === sheetsToFetch.length) {
+                    throw new Error(failedSheets.join(' | '));
                 }
-                
-                // Update data source badge
-                if (dataSourcesUsed.length > 0) {
-                    document.getElementById('currentDataSource').textContent = dataSourcesUsed.join(' + ');
-                } else {
-                    document.getElementById('currentDataSource').textContent = 'No tickets found';
-                }
-                
-                if (allData.length > 0) {
-                    closedTicketsData = allData;
-                    
-                    // Analyze data
-                    analyzeData();
-                    
-                    // Analyze personnel performance
-                    analyzePersonnelPerformance();
-                    
-                    // Update last updated timestamp
-                    document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
-                    
-                    // Hide loading, show charts
-                    loading.style.display = 'none';
-                    
-                    // Create all visualizations
-                    createSummaryStats();
-                    createDemographicsChart();
-                    createUpdateTypeChart();
-                    createResponseTimeChart();
-                    createPerformanceChart();
-                    createCorrelationChart();
-                    
-                    // Create personnel performance section
-                    createPersonnelPerformance();
-                    personnelSection.style.display = 'block';
-                    
-                } else {
-                    // No tickets found - show error
+
+                // Remove duplicate ticket numbers
+                const seen = new Set();
+                allData = allData.filter(t => {
+                    const id = t['Ticket Number'];
+                    if (!id) return true;
+                    if (seen.has(id)) return false;
+                    seen.add(id);
+                    return true;
+                });
+
+                updateConnectionStatus(allData.length > 0 ? 'connected' : 'disconnected');
+                document.getElementById('currentDataSource').textContent =
+                    dataSourcesUsed.length > 0 ? dataSourcesUsed.join(' + ') : 'No tickets found';
+
+                if (allData.length === 0) {
                     document.getElementById('errorMessage').textContent = 'No tickets found for the selected date range.';
                     loading.style.display = 'none';
                     error.style.display = 'flex';
+                    return;
                 }
-                
+
+                closedTicketsData = allData;
+                analyzeData();
+                analyzePersonnelPerformance();
+
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                loading.style.display = 'none';
+
+                // Show containers BEFORE drawing so charts can measure their width
+                chartsContainer.style.display = 'grid';
+                personnelSection.style.display = 'block';
+
+                createSummaryStats();
+                createDemographicsChart();
+                createUpdateTypeChart();
+                createResponseTimeChart();
+                createPerformanceChart();
+                createCorrelationChart();
+                sortAndFilterPersonnel();
+
             } catch (err) {
                 console.error('Error loading data:', err);
-                document.getElementById('errorMessage').textContent = 'Failed to connect to Google Sheets. Please check your internet connection and try again.';
+                document.getElementById('errorMessage').textContent =
+                    'Failed to load Google Sheets data: ' + err.message;
                 loading.style.display = 'none';
                 error.style.display = 'flex';
                 updateConnectionStatus('disconnected');
             }
         }
-        
-        // Parse sheet data and filter by date
-        function parseSheetData(csvText, sheetName, sheetType, startDate, endDate) {
-            const rows = csvText.split('\n');
-            const tickets = [];
-            
-            // Parse and filter valid rows
-            for (let i = 1; i < rows.length; i++) {
-                if (rows[i].trim() === '') continue;
-                
-                const cols = parseCSVRow(rows[i]);
-                
-                // Check if we have the required columns (A-L)
-                if (cols.length >= 12) {
-                    // Get personnel name from column I (Service Performed by)
-                    const personnelName = cols[8] || '';
-                    
-                    // Get response time text from column J (Response Time)
-                    const responseTimeText = cols[9] || '';
-                    
-                    // Get performance rating from column L
-                    const performanceRating = parseFloat(cols[11]) || 0;
-                    
-                    // SKIP TICKETS WITHOUT RATING (cancelled tickets)
-                    if (performanceRating <= 0) {
-                        continue; // Skip this ticket
-                    }
-                    
-                    // Get date from column B (index 1)
-                    const dateStr = cols[1] || '';
-                    const ticketDate = parseDate(dateStr);
-                    
-                    // Check if ticket is within date range
-                    let isInDateRange = false;
-                    
-                    if (ticketDate && !isNaN(ticketDate.getTime())) {
-                        // If we have a valid date, check if it's within range
-                        isInDateRange = ticketDate >= startDate && ticketDate <= endDate;
+
+        // Full CSV parser: handles quoted commas, escaped quotes ("") and line breaks inside quotes
+        function parseCSV(text) {
+            const rows = [];
+            let row = [];
+            let field = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (inQuotes) {
+                    if (char === '"') {
+                        if (text[i + 1] === '"') { field += '"'; i++; }
+                        else inQuotes = false;
                     } else {
-                        // For tickets without dates, include them only if:
-                        // - They're from Archives 2025 sheet AND the date range includes 2025
-                        // - They're from Closed Tickets sheet AND the date range includes 2026+
-                        if (sheetType === 'archives') {
-                            // Archives 2025 tickets without dates are assumed to be from 2025
-                            isInDateRange = (startDate.getFullYear() <= 2025 && endDate.getFullYear() >= 2025);
-                        } else if (sheetType === 'closed') {
-                            // For Closed Tickets without dates, only include if range is 2026 or later
-                            // and assume they're from 2026 (conservative approach)
-                            isInDateRange = (startDate.getFullYear() >= 2026);
-                        }
+                        field += char;
                     }
-                    
-                    if (!isInDateRange) {
-                        continue;
-                    }
-                    
-                    // Convert response time text to numeric value
-                    const responseTimeNumeric = convertResponseTimeToNumeric(responseTimeText);
-                    const responseTimeCategory = getResponseTimeCategoryInfo(responseTimeText);
-                    
-                    // Create ticket object with your actual column structure
-                    const ticket = {
-                        'Ticket Number': cols[0] || '',                // Column A
-                        'Date': dateStr,                                // Column B
-                        'Talent Name': cols[2] || '',                  // Column C
-                        'Age': cols[3] || '',                          // Column D
-                        'Sex': cols[4] || '',                          // Column E
-                        'Talent Email': cols[5] || '',                 // Column F
-                        'Type of Website Update': cols[6] || '',       // Column G
-                        'Preferred MIS Personnel': cols[7] || '',      // Column H
-                        'Service performed by': personnelName,         // Column I
-                        'Response Time Text': responseTimeText,        // Column J (text)
-                        'Response Time': responseTimeNumeric,          // Converted numeric value
-                        'Response Time Category': responseTimeCategory, // Category info
-                        'Comments / Feedback': cols[10] || '',         // Column K
-                        'Performance Rating': performanceRating,       // Column L
-                        'ParsedDate': ticketDate,
-                        'SourceSheet': sheetName
-                    };
-                    
-                    // Only add if we have at least some valid data
-                    if (ticket['Age'] || ticket['Sex'] || ticket['Type of Website Update'] || 
-                        ticket['Response Time'] > 0 || ticket['Performance Rating'] > 0 || 
-                        ticket['Service performed by']) {
-                        tickets.push(ticket);
-                    }
+                } else if (char === '"') {
+                    inQuotes = true;
+                } else if (char === ',') {
+                    row.push(field.trim());
+                    field = '';
+                } else if (char === '\n' || char === '\r') {
+                    if (char === '\r' && text[i + 1] === '\n') i++;
+                    row.push(field.trim());
+                    rows.push(row);
+                    row = [];
+                    field = '';
+                } else {
+                    field += char;
                 }
             }
-            
+            if (field !== '' || row.length > 0) {
+                row.push(field.trim());
+                rows.push(row);
+            }
+            return rows;
+        }
+
+        function parseSheetData(csvText, sheetName, sheetType, startDate, endDate) {
+            const rows = parseCSV(csvText);
+            const tickets = [];
+
+            for (let i = 1; i < rows.length; i++) {
+                const cols = rows[i];
+                if (!cols || cols.length < 12) continue;
+                if (cols.every(c => c === '')) continue;
+
+                const personnelName = cols[8] || '';
+                const responseTimeText = cols[9] || '';
+                const performanceRating = parseFloat(cols[11]) || 0;
+
+                // Skip tickets without rating (cancelled / not yet rated)
+                if (performanceRating <= 0) continue;
+
+                const dateStr = cols[1] || '';
+                const ticketDate = parseDate(dateStr);
+
+                let isInDateRange = false;
+                if (ticketDate && !isNaN(ticketDate.getTime())) {
+                    isInDateRange = ticketDate >= startDate && ticketDate <= endDate;
+                } else if (sheetType === 'archives') {
+                    isInDateRange = (startDate.getFullYear() <= 2025 && endDate.getFullYear() >= 2025);
+                } else if (sheetType === 'closed') {
+                    isInDateRange = (endDate.getFullYear() >= 2026);
+                }
+                if (!isInDateRange) continue;
+
+                const ticket = {
+                    'Ticket Number': cols[0] || '',
+                    'Date': dateStr,
+                    'Talent Name': cols[2] || '',
+                    'Age': cols[3] || '',
+                    'Sex': cols[4] || '',
+                    'Talent Email': cols[5] || '',
+                    'Type of Website Update': cols[6] || '',
+                    'Preferred MIS Personnel': cols[7] || '',
+                    'Service performed by': personnelName,
+                    'Personnel List': splitPersonnelNames(personnelName),
+                    'Response Time Text': responseTimeText,
+                    'Response Time': convertResponseTimeToNumeric(responseTimeText),
+                    'Response Time Category': getResponseTimeCategoryInfo(responseTimeText),
+                    'Comments / Feedback': cols[10] || '',
+                    'Performance Rating': performanceRating,
+                    'ParsedDate': ticketDate,
+                    'SourceSheet': sheetName
+                };
+
+                tickets.push(ticket);
+            }
             return tickets;
         }
-        
-        // Parse CSV row with proper handling of quoted fields
-        function parseCSVRow(row) {
-            const cols = [];
-            let current = '';
-            let inQuotes = false;
-            
-            for (let i = 0; i < row.length; i++) {
-                const char = row[i];
-                
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    cols.push(current.trim());
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            
-            cols.push(current.trim());
-            return cols;
+
+        // ==================== ANALYSIS ====================
+        function getAgeGroup(age) {
+            if (age <= 25) return '18-25';
+            if (age <= 35) return '26-35';
+            if (age <= 45) return '36-45';
+            if (age <= 55) return '46-55';
+            return '56+';
         }
-        
-        // Analyze the data to create summary statistics
+
+        function normalizeSex(sex) {
+            const s = (sex || '').trim().toLowerCase();
+            if (s === 'male' || s === 'm') return 'Male';
+            if (s === 'female' || s === 'f') return 'Female';
+            return 'Other';
+        }
+
         function analyzeData() {
             analyticsSummary = {
                 totalTickets: closedTicketsData.length,
-                
-                // Age analysis
                 ageGroups: {},
                 averageAge: 0,
-                
-                // Gender analysis
                 genderCount: { Male: 0, Female: 0 },
-                
-                // Website update type analysis
                 updateTypes: {},
-                
-                // Response time analysis
                 responseTimeCategories: {
-                    'Less than 1 hour': { 
-                        label: 'Less than 1 hour', 
-                        description: '<1 hr',
-                        count: 0,
-                        numericValue: 0.5
-                    },
-                    'Within the day': { 
-                        label: 'Within the day', 
-                        description: '1-8 hrs',
-                        count: 0,
-                        numericValue: 4.5
-                    },
-                    'The next day': { 
-                        label: 'The next day', 
-                        description: '8-16 hrs',
-                        count: 0,
-                        numericValue: 12
-                    },
-                    'More than 2 days': { 
-                        label: 'More than 2 days', 
-                        description: '>16 hrs',
-                        count: 0,
-                        numericValue: 24
-                    }
+                    'Less than 1 hour': { label: 'Less than 1 hour', description: '<1 hr', count: 0, numericValue: 0.5 },
+                    'Within the day': { label: 'Within the day', description: '1-8 hrs', count: 0, numericValue: 4.5 },
+                    'The next day': { label: 'The next day', description: '8-16 hrs', count: 0, numericValue: 12 },
+                    'More than 2 days': { label: 'More than 2 days', description: '>16 hrs', count: 0, numericValue: 24 }
                 },
-                
-                // Response time numeric stats
-                responseTimeStats: {
-                    min: Infinity,
-                    max: 0,
-                    avg: 0,
-                    total: 0
-                },
-                
-                // Performance analysis
-                performanceStats: {
-                    min: Infinity,
-                    max: 0,
-                    avg: 0,
-                    total: 0
-                }
+                responseTimeStats: { min: Infinity, max: 0, avg: 0, total: 0 },
+                performanceStats: { min: Infinity, max: 0, avg: 0, total: 0 }
             };
-            
-            let ageSum = 0;
-            let validAgeCount = 0;
-            let responseTimeSum = 0;
-            let validResponseTimeCount = 0;
-            let performanceSum = 0;
-            let validPerformanceCount = 0;
-            
-            // Process each ticket
+
+            let ageSum = 0, validAgeCount = 0;
+            let responseTimeSum = 0, validResponseTimeCount = 0;
+            let performanceSum = 0, validPerformanceCount = 0;
+
             closedTicketsData.forEach(ticket => {
-                // Age analysis
-                if (ticket.Age) {
-                    const age = parseInt(ticket.Age);
-                    if (!isNaN(age)) {
-                        ageSum += age;
-                        validAgeCount++;
-                        
-                        let ageGroup;
-                        if (age <= 25) ageGroup = '18-25';
-                        else if (age <= 35) ageGroup = '26-35';
-                        else if (age <= 45) ageGroup = '36-45';
-                        else if (age <= 55) ageGroup = '46-55';
-                        else ageGroup = '56+';
-                        
-                        analyticsSummary.ageGroups[ageGroup] = (analyticsSummary.ageGroups[ageGroup] || 0) + 1;
-                    }
+                const age = parseInt(ticket.Age);
+                if (!isNaN(age)) {
+                    ageSum += age;
+                    validAgeCount++;
+                    const group = getAgeGroup(age);
+                    analyticsSummary.ageGroups[group] = (analyticsSummary.ageGroups[group] || 0) + 1;
                 }
-                
-                // Gender analysis
-                if (ticket.Sex) {
-                    const gender = ticket.Sex.trim().toLowerCase();
-                    if (gender === 'male' || gender === 'm') {
-                        analyticsSummary.genderCount.Male++;
-                    } else if (gender === 'female' || gender === 'f') {
-                        analyticsSummary.genderCount.Female++;
-                    }
-                }
-                
-                // Website update type analysis
-                if (ticket['Type of Website Update']) {
-                    const updateType = ticket['Type of Website Update'].trim();
+
+                const sex = normalizeSex(ticket.Sex);
+                if (sex === 'Male' || sex === 'Female') analyticsSummary.genderCount[sex]++;
+
+                const updateType = ticket['Type of Website Update'].trim();
+                if (updateType) {
                     analyticsSummary.updateTypes[updateType] = (analyticsSummary.updateTypes[updateType] || 0) + 1;
                 }
-                
-                // Response time analysis
+
                 const responseTime = ticket['Response Time'];
                 if (responseTime > 0) {
-                    // Update category counts based on text category
                     const categoryInfo = ticket['Response Time Category'];
-                    if (categoryInfo) {
-                        if (categoryInfo.label === 'Less than 1 hour') {
-                            analyticsSummary.responseTimeCategories['Less than 1 hour'].count++;
-                        } else if (categoryInfo.label === 'Within the day') {
-                            analyticsSummary.responseTimeCategories['Within the day'].count++;
-                        } else if (categoryInfo.label === 'The next day') {
-                            analyticsSummary.responseTimeCategories['The next day'].count++;
-                        } else if (categoryInfo.label === 'More than 2 days') {
-                            analyticsSummary.responseTimeCategories['More than 2 days'].count++;
-                        }
+                    if (categoryInfo && analyticsSummary.responseTimeCategories[categoryInfo.label]) {
+                        analyticsSummary.responseTimeCategories[categoryInfo.label].count++;
                     }
-                    
-                    // Update numeric stats
                     responseTimeSum += responseTime;
                     validResponseTimeCount++;
-                    
-                    if (responseTime < analyticsSummary.responseTimeStats.min) {
-                        analyticsSummary.responseTimeStats.min = responseTime;
-                    }
-                    if (responseTime > analyticsSummary.responseTimeStats.max) {
-                        analyticsSummary.responseTimeStats.max = responseTime;
-                    }
+                    analyticsSummary.responseTimeStats.min = Math.min(analyticsSummary.responseTimeStats.min, responseTime);
+                    analyticsSummary.responseTimeStats.max = Math.max(analyticsSummary.responseTimeStats.max, responseTime);
                 }
-                
-                // Performance analysis
-                if (ticket['Performance Rating'] > 0) {
-                    performanceSum += ticket['Performance Rating'];
+
+                const rating = ticket['Performance Rating'];
+                if (rating > 0) {
+                    performanceSum += rating;
                     validPerformanceCount++;
-                    
-                    if (ticket['Performance Rating'] < analyticsSummary.performanceStats.min) {
-                        analyticsSummary.performanceStats.min = ticket['Performance Rating'];
-                    }
-                    if (ticket['Performance Rating'] > analyticsSummary.performanceStats.max) {
-                        analyticsSummary.performanceStats.max = ticket['Performance Rating'];
-                    }
+                    analyticsSummary.performanceStats.min = Math.min(analyticsSummary.performanceStats.min, rating);
+                    analyticsSummary.performanceStats.max = Math.max(analyticsSummary.performanceStats.max, rating);
                 }
             });
-            
-            // Calculate averages
-            if (validAgeCount > 0) {
-                analyticsSummary.averageAge = Math.round(ageSum / validAgeCount);
-            }
-            
+
+            if (validAgeCount > 0) analyticsSummary.averageAge = Math.round(ageSum / validAgeCount);
             if (validResponseTimeCount > 0) {
                 analyticsSummary.responseTimeStats.avg = responseTimeSum / validResponseTimeCount;
                 analyticsSummary.responseTimeStats.total = responseTimeSum;
             }
-            
             if (validPerformanceCount > 0) {
                 analyticsSummary.performanceStats.avg = performanceSum / validPerformanceCount;
                 analyticsSummary.performanceStats.total = performanceSum;
             }
-            
-            console.log('Analytics summary:', analyticsSummary);
         }
-        
-        // Analyze personnel performance
+
         function analyzePersonnelPerformance() {
             personnelPerformance = {};
-            
+
             closedTicketsData.forEach(ticket => {
-                const personnelName = ticket['Service performed by'];
-                if (!personnelName) return;
-                
-                if (!personnelPerformance[personnelName]) {
-                    personnelPerformance[personnelName] = {
-                        name: personnelName,
-                        totalTickets: 0,
-                        performanceSum: 0,
-                        responseTimeSum: 0,
-                        performanceTickets: 0,
-                        responseTimeTickets: 0,
-                        responseTimes: [],
-                        updateTypes: {}
-                    };
-                }
-                
-                const personnel = personnelPerformance[personnelName];
-                personnel.totalTickets++;
-                
-                // Track performance
-                if (ticket['Performance Rating'] > 0) {
-                    personnel.performanceSum += ticket['Performance Rating'];
-                    personnel.performanceTickets++;
-                }
-                
-                // Track response time
-                if (ticket['Response Time'] > 0) {
-                    personnel.responseTimeSum += ticket['Response Time'];
-                    personnel.responseTimeTickets++;
-                    personnel.responseTimes.push(ticket['Response Time']);
-                }
-                
-                // Track update types
-                if (ticket['Type of Website Update']) {
+                // A ticket handled by "Leo James Abaloyan, Jester John Junio"
+                // counts as one ticket for EACH person listed.
+                ticket['Personnel List'].forEach(personnelName => {
+                    if (!personnelPerformance[personnelName]) {
+                        personnelPerformance[personnelName] = {
+                            name: personnelName,
+                            totalTickets: 0,
+                            sharedTickets: 0,
+                            performanceSum: 0,
+                            responseTimeSum: 0,
+                            performanceTickets: 0,
+                            responseTimeTickets: 0,
+                            responseTimes: [],
+                            updateTypes: {}
+                        };
+                    }
+
+                    const p = personnelPerformance[personnelName];
+                    p.totalTickets++;
+                    if (ticket['Personnel List'].length > 1) p.sharedTickets++;
+
+                    if (ticket['Performance Rating'] > 0) {
+                        p.performanceSum += ticket['Performance Rating'];
+                        p.performanceTickets++;
+                    }
+                    if (ticket['Response Time'] > 0) {
+                        p.responseTimeSum += ticket['Response Time'];
+                        p.responseTimeTickets++;
+                        p.responseTimes.push(ticket['Response Time']);
+                    }
                     const updateType = ticket['Type of Website Update'].trim();
-                    personnel.updateTypes[updateType] = (personnel.updateTypes[updateType] || 0) + 1;
-                }
+                    if (updateType) p.updateTypes[updateType] = (p.updateTypes[updateType] || 0) + 1;
+                });
             });
-            
-            // Calculate averages and scores for each personnel
-            Object.values(personnelPerformance).forEach(personnel => {
-                personnel.averagePerformance = personnel.performanceTickets > 0 
-                    ? personnel.performanceSum / personnel.performanceTickets 
-                    : 0;
-                
-                personnel.averageResponseTime = personnel.responseTimeTickets > 0 
-                    ? personnel.responseTimeSum / personnel.responseTimeTickets 
-                    : 0;
-                
-                // Calculate combined score (lower response time = higher score)
-                const scoreData = calculateCombinedScore(personnel.averagePerformance, personnel.averageResponseTime);
-                personnel.combinedScore = scoreData.combinedScore;
-                personnel.performanceScore = scoreData.performanceScore;
-                personnel.responseScore = scoreData.responseScore;
-                
-                personnel.performanceCategory = getPerformanceCategory(personnel.combinedScore);
-                
-                // Find most common update type
-                const updateTypeEntries = Object.entries(personnel.updateTypes);
-                personnel.primaryUpdateType = updateTypeEntries.length > 0
-                    ? updateTypeEntries.sort((a, b) => b[1] - a[1])[0][0]
-                    : 'N/A';
+
+            Object.values(personnelPerformance).forEach(p => {
+                p.averagePerformance = p.performanceTickets > 0 ? p.performanceSum / p.performanceTickets : 0;
+                p.averageResponseTime = p.responseTimeTickets > 0 ? p.responseTimeSum / p.responseTimeTickets : 0;
+
+                const scoreData = calculateCombinedScore(p.averagePerformance, p.averageResponseTime);
+                p.combinedScore = scoreData.combinedScore;
+                p.performanceScore = scoreData.performanceScore;
+                p.responseScore = scoreData.responseScore;
+                p.performanceCategory = getPerformanceCategory(p.combinedScore);
+
+                const entries = Object.entries(p.updateTypes);
+                p.primaryUpdateType = entries.length > 0 ? entries.sort((a, b) => b[1] - a[1])[0][0] : 'N/A';
             });
-            
+
             console.log('Personnel performance analysis:', personnelPerformance);
         }
-        
-        // Create summary statistics cards
+
+        // ==================== SUMMARY STATS ====================
         function createSummaryStats() {
             const statsSummary = document.getElementById('statsSummary');
-            
-            const responseCategories = analyticsSummary.responseTimeCategories;
-            const totalWithResponseTime = 
-                responseCategories['Less than 1 hour'].count +
-                responseCategories['Within the day'].count +
-                responseCategories['The next day'].count +
-                responseCategories['More than 2 days'].count;
-            
-            const categoryArray = Object.values(responseCategories);
-            const mostCommonCategory = categoryArray.reduce((prev, current) => 
-                (prev.count > current.count) ? prev : current
-            );
-            
-            const lessThan1HourPercentage = totalWithResponseTime > 0 ? 
-                Math.round((responseCategories['Less than 1 hour'].count / totalWithResponseTime) * 100) : 0;
-            
-            // Count unique personnel
-            const uniquePersonnelCount = Object.keys(personnelPerformance).length;
-            
-            // Calculate average combined score
-            let totalCombinedScore = 0;
-            let personnelWithScores = 0;
-            Object.values(personnelPerformance).forEach(personnel => {
-                if (personnel.combinedScore > 0) {
-                    totalCombinedScore += personnel.combinedScore;
-                    personnelWithScores++;
-                }
-            });
-            const avgCombinedScore = personnelWithScores > 0 ? totalCombinedScore / personnelWithScores : 0;
-            
+            const rc = analyticsSummary.responseTimeCategories;
+            const totalWithResponseTime = Object.values(rc).reduce((s, c) => s + c.count, 0);
+            const mostCommonCategory = Object.values(rc).reduce((a, b) => (a.count >= b.count ? a : b));
+            const lessThan1HourPercentage = totalWithResponseTime > 0
+                ? Math.round((rc['Less than 1 hour'].count / totalWithResponseTime) * 100) : 0;
+
+            const personnelList = Object.values(personnelPerformance);
+            const scored = personnelList.filter(p => p.combinedScore > 0);
+            const avgCombinedScore = scored.length > 0
+                ? scored.reduce((s, p) => s + p.combinedScore, 0) / scored.length : 0;
+
             const statsCards = [
-                {
-                    icon: 'fas fa-ticket-alt',
-                    iconColor: '#4a6fa5',
-                    title: 'Total Closed Tickets',
-                    value: analyticsSummary.totalTickets,
-                    subtitle: 'Successfully resolved requests'
-                },
-                {
-                    icon: 'fas fa-user-friends',
-                    iconColor: '#38a169',
-                    title: 'Average Age',
-                    value: analyticsSummary.averageAge,
-                    subtitle: 'Years'
-                },
-                {
-                    icon: 'fas fa-venus-mars',
-                    iconColor: '#d53f8c',
-                    title: 'Sex Ratio',
-                    value: `${analyticsSummary.genderCount.Male}:${analyticsSummary.genderCount.Female}`,
-                    subtitle: 'Male:Female'
-                },
-                {
-                    icon: 'fas fa-user-tie',
-                    iconColor: '#805ad5',
-                    title: 'Active Personnel',
-                    value: uniquePersonnelCount,
-                    subtitle: 'Unique staff members'
-                },
-                {
-                    icon: 'fas fa-chart-line',
-                    iconColor: '#e53e3e',
-                    title: 'Avg Performance Score',
-                    value: avgCombinedScore.toFixed(1),
-                    subtitle: 'Out of 10'
-                },
-                {
-                    icon: 'fas fa-bolt',
-                    iconColor: '#38a169',
-                    title: 'Most Common Response',
-                    value: mostCommonCategory.label.split(' ')[0],
-                    subtitle: `${mostCommonCategory.count} tickets`
-                },
-                {
-                    icon: 'fas fa-percentage',
-                    iconColor: '#4a6fa5',
-                    title: '<1 Hour Response Rate',
-                    value: `${lessThan1HourPercentage}%`,
-                    subtitle: 'Immediate resolution'
-                }
+                { icon: 'fas fa-ticket-alt', iconColor: '#4a6fa5', title: 'Total Closed Tickets', value: analyticsSummary.totalTickets, subtitle: 'Successfully resolved requests' },
+                { icon: 'fas fa-user-friends', iconColor: '#38a169', title: 'Average Age', value: analyticsSummary.averageAge, subtitle: 'Years' },
+                { icon: 'fas fa-venus-mars', iconColor: '#d53f8c', title: 'Sex Ratio', value: `${analyticsSummary.genderCount.Male}:${analyticsSummary.genderCount.Female}`, subtitle: 'Male:Female' },
+                { icon: 'fas fa-user-tie', iconColor: '#805ad5', title: 'Active Personnel', value: personnelList.length, subtitle: 'Unique staff members' },
+                { icon: 'fas fa-chart-line', iconColor: '#e53e3e', title: 'Avg Performance Score', value: avgCombinedScore.toFixed(1), subtitle: 'Out of 10' },
+                { icon: 'fas fa-bolt', iconColor: '#38a169', title: 'Most Common Response', value: mostCommonCategory.description, subtitle: `${mostCommonCategory.label} • ${mostCommonCategory.count} tickets` },
+                { icon: 'fas fa-percentage', iconColor: '#4a6fa5', title: '<1 Hour Response Rate', value: `${lessThan1HourPercentage}%`, subtitle: 'Immediate resolution' }
             ];
-            
+
             statsSummary.innerHTML = statsCards.map(card => `
                 <div class="stat-card">
                     <div class="stat-icon" style="background-color: ${card.iconColor}20; color: ${card.iconColor};">
@@ -1888,467 +1366,218 @@
                     </div>
                     <div class="stat-content">
                         <h3>${card.title}</h3>
-                        <div class="stat-value">${card.value}</div>
-                        <div class="stat-subtitle">${card.subtitle}</div>
+                        <div class="stat-value">${escapeHTML(card.value)}</div>
+                        <div class="stat-subtitle">${escapeHTML(card.subtitle)}</div>
                     </div>
                 </div>
             `).join('');
         }
-        
-        // Create personnel performance cards and table
-        function createPersonnelPerformance() {
-            const personnelGrid = document.getElementById('personnelGrid');
-            const performanceTableBody = document.getElementById('performanceTableBody');
-            const personnelCount = document.getElementById('personnelCount');
-            
-            // Convert personnel data to array and sort by combined score
-            let personnelArray = Object.values(personnelPerformance);
-            
-            // Sort by combined score (descending)
-            personnelArray.sort((a, b) => b.combinedScore - a.combinedScore);
-            
-            // Update count
-            personnelCount.textContent = personnelArray.length;
-            
-            // Clear previous content
-            personnelGrid.innerHTML = '';
-            performanceTableBody.innerHTML = '';
-            
-            // Create personnel cards
-            personnelArray.forEach((personnel, index) => {
-                const cardId = `personnel-card-${index}`;
-                const chartId = `personnel-chart-${index}`;
-                
-                // Create card
-                const cardHTML = `
-                    <div class="personnel-card">
-                        <div class="personnel-card-header">
-                            <div class="personnel-avatar">
-                                ${getInitials(personnel.name)}
-                            </div>
-                            <div class="personnel-info">
-                                <h3>${personnel.name}</h3>
-                                <p> </p>
-                            </div>
-                        </div>
-                        
-                        <div class="score-container">
-                            <div class="performance-score">
-                                ${personnel.combinedScore.toFixed(1)}
-                            </div>
-                            <div>
-                                <div style="font-size: 0.9rem; color: #4a5568; font-weight: 600;">Combined Performance Score</div>
-                                <div style="font-size: 0.8rem; color: #718096;">
-                                    Rating: ${personnel.averagePerformance.toFixed(1)}/5 • Response: ${personnel.averageResponseTime.toFixed(1)}h
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="personnel-stats">
-                            <div class="personnel-stat">
-                                <div class="personnel-stat-value">${personnel.averagePerformance.toFixed(1)}</div>
-                                <div class="personnel-stat-label">Avg Rating</div>
-                                <div class="personnel-performance-bar">
-                                    <div class="personnel-performance-fill" 
-                                         style="width: ${(personnel.averagePerformance / 5) * 100}%; 
-                                                background-color: ${personnel.averagePerformance >= 4 ? '#38a169' : 
-                                                                   personnel.averagePerformance >= 3 ? '#d69e2e' : '#e53e3e'};">
-                                    </div>
-                                </div>
-                                <div class="personnel-rating">
-                                    <div class="stars">
-                                        ${getStarsHTML(personnel.averagePerformance)}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="personnel-stat">
-                                <div class="personnel-stat-value">${personnel.averageResponseTime.toFixed(1)}h</div>
-                                <div class="personnel-stat-label">Avg Response Time</div>
-                                <div class="personnel-stat-label" style="margin-top: 5px;">
-                                    <span style="color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
-                                                       personnel.averageResponseTime <= 4 ? '#68d391' : 
-                                                       personnel.averageResponseTime <= 8 ? '#d69e2e' : 
-                                                       personnel.averageResponseTime <= 12 ? '#ed8936' : 
-                                                       personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}; font-weight: 600;">
-                                        ${personnel.averageResponseTime < 1 ? 'Excellent' : 
-                                         personnel.averageResponseTime <= 4 ? 'Very Good' : 
-                                         personnel.averageResponseTime <= 8 ? 'Good' : 
-                                         personnel.averageResponseTime <= 12 ? 'Average' : 
-                                         personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="personnel-chart-mini" id="${chartId}"></div>
-                        
-                        <div class="personnel-tickets">
-                            <div><strong>${personnel.totalTickets}</strong> total tickets handled</div>
-                            <div>Most common update type: ${personnel.primaryUpdateType.substring(0, 30)}${personnel.primaryUpdateType.length > 30 ? '...' : ''}</div>
-                        </div>
-                    </div>
-                `;
-                
-                personnelGrid.innerHTML += cardHTML;
-                
-                // Create mini chart for response times
-                createMiniResponseChart(personnel, chartId);
-                
-                // Add to table
-                const rowHTML = `
-                    <tr>
-                        <td>
-                            <div class="rank ${index < 3 ? `rank-${index + 1}` : ''}">
-                                ${index + 1}
-                            </div>
-                        </td>
-                        <td><strong>${personnel.name}</strong></td>
-                        <td><strong style="font-size: 1.1rem;">${personnel.combinedScore.toFixed(1)}</strong>/10</td>
-                        <td>${personnel.averagePerformance.toFixed(1)}/5</td>
-                        <td>
-                            ${personnel.averageResponseTime.toFixed(1)}h
-                            <div style="font-size: 0.8rem; color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
-                                                                   personnel.averageResponseTime <= 4 ? '#68d391' : 
-                                                                   personnel.averageResponseTime <= 8 ? '#d69e2e' : 
-                                                                   personnel.averageResponseTime <= 12 ? '#ed8936' : 
-                                                                   personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}">
-                                ${personnel.averageResponseTime < 1 ? 'Excellent' : 
-                                 personnel.averageResponseTime <= 4 ? 'Very Good' : 
-                                 personnel.averageResponseTime <= 8 ? 'Good' : 
-                                 personnel.averageResponseTime <= 12 ? 'Average' : 
-                                 personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
-                            </div>
-                        </td>
-                        <td>${personnel.totalTickets}</td>
-                        <td>
-                            <span class="rating-badge ${personnel.performanceCategory.class}">
-                                ${personnel.performanceCategory.label}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-                
-                performanceTableBody.innerHTML += rowHTML;
-            });
-            
-            // Add event listeners for filters
-            document.getElementById('sortPersonnel').addEventListener('change', function() {
-                sortAndFilterPersonnel();
-            });
-            
-            document.getElementById('filterPersonnel').addEventListener('change', function() {
-                sortAndFilterPersonnel();
-            });
-        }
-        
-        // Sort and filter personnel
+
+        // ==================== PERSONNEL SECTION ====================
         function sortAndFilterPersonnel() {
             const sortBy = document.getElementById('sortPersonnel').value;
             const filterBy = document.getElementById('filterPersonnel').value;
-            
-            let personnelArray = Object.values(personnelPerformance);
-            
-            // Apply filter
-            switch(filterBy) {
-                case 'top10':
-                    personnelArray = personnelArray.slice(0, 10);
-                    break;
-                case 'top20':
-                    personnelArray = personnelArray.slice(0, 20);
-                    break;
-                case 'score8':
-                    personnelArray = personnelArray.filter(p => p.combinedScore >= 8.0);
-                    break;
-                case 'score6':
-                    personnelArray = personnelArray.filter(p => p.combinedScore >= 6.0 && p.combinedScore < 8.0);
-                    break;
-                case 'score4':
-                    personnelArray = personnelArray.filter(p => p.combinedScore >= 4.0 && p.combinedScore < 6.0);
-                    break;
-                case 'score2':
-                    personnelArray = personnelArray.filter(p => p.combinedScore < 4.0);
-                    break;
-                // 'all' - keep all personnel
+
+            // Rank by combined score first so "Top 10/20" means the real top performers
+            let personnelArray = Object.values(personnelPerformance)
+                .sort((a, b) => b.combinedScore - a.combinedScore);
+
+            switch (filterBy) {
+                case 'top10': personnelArray = personnelArray.slice(0, 10); break;
+                case 'top20': personnelArray = personnelArray.slice(0, 20); break;
+                case 'score8': personnelArray = personnelArray.filter(p => p.combinedScore >= 8.0); break;
+                case 'score6': personnelArray = personnelArray.filter(p => p.combinedScore >= 6.0 && p.combinedScore < 8.0); break;
+                case 'score4': personnelArray = personnelArray.filter(p => p.combinedScore >= 4.0 && p.combinedScore < 6.0); break;
+                case 'score2': personnelArray = personnelArray.filter(p => p.combinedScore < 4.0); break;
             }
-            
-            // Apply sort
-            switch(sortBy) {
-                case 'score-desc':
-                    personnelArray.sort((a, b) => b.combinedScore - a.combinedScore);
-                    break;
-                case 'score-asc':
-                    personnelArray.sort((a, b) => a.combinedScore - b.combinedScore);
-                    break;
-                case 'rating-desc':
-                    personnelArray.sort((a, b) => b.averagePerformance - a.averagePerformance);
-                    break;
-                case 'rating-asc':
-                    personnelArray.sort((a, b) => a.averagePerformance - b.averagePerformance);
-                    break;
-                case 'response-asc':
-                    personnelArray.sort((a, b) => a.averageResponseTime - b.averageResponseTime);
-                    break;
-                case 'response-desc':
-                    personnelArray.sort((a, b) => b.averageResponseTime - a.averageResponseTime);
-                    break;
-                case 'tickets-desc':
-                    personnelArray.sort((a, b) => b.totalTickets - a.totalTickets);
-                    break;
-                case 'tickets-asc':
-                    personnelArray.sort((a, b) => a.totalTickets - b.totalTickets);
-                    break;
-            }
-            
-            // Update display
+
+            const sorters = {
+                'score-desc': (a, b) => b.combinedScore - a.combinedScore,
+                'score-asc': (a, b) => a.combinedScore - b.combinedScore,
+                'rating-desc': (a, b) => b.averagePerformance - a.averagePerformance,
+                'rating-asc': (a, b) => a.averagePerformance - b.averagePerformance,
+                'response-asc': (a, b) => a.averageResponseTime - b.averageResponseTime,
+                'response-desc': (a, b) => b.averageResponseTime - a.averageResponseTime,
+                'tickets-desc': (a, b) => b.totalTickets - a.totalTickets,
+                'tickets-asc': (a, b) => a.totalTickets - b.totalTickets
+            };
+            if (sorters[sortBy]) personnelArray.sort(sorters[sortBy]);
+
             updatePersonnelDisplay(personnelArray);
         }
-        
-        // Update personnel display after sorting/filtering
+
         function updatePersonnelDisplay(personnelArray) {
             const personnelGrid = document.getElementById('personnelGrid');
-            const performanceTableBody = document.getElementById('performanceTableBody');
-            const personnelCount = document.getElementById('personnelCount');
-            
-            // Update count
-            personnelCount.textContent = personnelArray.length;
-            
-            // Clear previous content
-            personnelGrid.innerHTML = '';
-            performanceTableBody.innerHTML = '';
-            
-            // Create updated cards and table rows
-            personnelArray.forEach((personnel, index) => {
-                const cardId = `personnel-card-${index}`;
-                const chartId = `personnel-chart-${index}`;
-                
-                // Create card
-                const cardHTML = `
+            const tableBody = document.getElementById('performanceTableBody');
+            document.getElementById('personnelCount').textContent = personnelArray.length;
+
+            // Build all HTML at once, THEN draw mini charts
+            // (using innerHTML += in a loop would wipe out previously drawn charts)
+            personnelGrid.innerHTML = personnelArray.map((p, index) => {
+                const rColor = getResponseColor(p.averageResponseTime);
+                const rLabel = getResponseLabel(p.averageResponseTime);
+                const ratingColor = p.averagePerformance >= 4 ? '#38a169' : p.averagePerformance >= 3 ? '#d69e2e' : '#e53e3e';
+                const updateTypeShort = p.primaryUpdateType.length > 30
+                    ? p.primaryUpdateType.substring(0, 30) + '...' : p.primaryUpdateType;
+
+                return `
                     <div class="personnel-card">
                         <div class="personnel-card-header">
-                            <div class="personnel-avatar">
-                                ${getInitials(personnel.name)}
-                            </div>
+                            <div class="personnel-avatar">${escapeHTML(getInitials(p.name))}</div>
                             <div class="personnel-info">
-                                <h3>${personnel.name}</h3>
-                                <p> </p>
+                                <h3>${escapeHTML(p.name)}</h3>
+                                <p>${p.sharedTickets > 0 ? `${p.sharedTickets} shared ticket${p.sharedTickets > 1 ? 's' : ''}` : '&nbsp;'}</p>
                             </div>
                         </div>
-                        
+
                         <div class="score-container">
-                            <div class="performance-score">
-                                ${personnel.combinedScore.toFixed(1)}
-                            </div>
+                            <div class="performance-score">${p.combinedScore.toFixed(1)}</div>
                             <div>
                                 <div style="font-size: 0.9rem; color: #4a5568; font-weight: 600;">Combined Performance Score</div>
                                 <div style="font-size: 0.8rem; color: #718096;">
-                                    Rating: ${personnel.averagePerformance.toFixed(1)}/5 • Response: ${personnel.averageResponseTime.toFixed(1)}h
+                                    Rating: ${p.averagePerformance.toFixed(1)}/5 • Response: ${p.averageResponseTime.toFixed(1)}h
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="personnel-stats">
                             <div class="personnel-stat">
-                                <div class="personnel-stat-value">${personnel.averagePerformance.toFixed(1)}</div>
+                                <div class="personnel-stat-value">${p.averagePerformance.toFixed(1)}</div>
                                 <div class="personnel-stat-label">Avg Rating</div>
                                 <div class="personnel-performance-bar">
-                                    <div class="personnel-performance-fill" 
-                                         style="width: ${(personnel.averagePerformance / 5) * 100}%; 
-                                                background-color: ${personnel.averagePerformance >= 4 ? '#38a169' : 
-                                                                   personnel.averagePerformance >= 3 ? '#d69e2e' : '#e53e3e'};">
-                                    </div>
+                                    <div class="personnel-performance-fill"
+                                         style="width: ${(p.averagePerformance / 5) * 100}%; background-color: ${ratingColor};"></div>
                                 </div>
                                 <div class="personnel-rating">
-                                    <div class="stars">
-                                        ${getStarsHTML(personnel.averagePerformance)}
-                                    </div>
+                                    <div class="stars">${getStarsHTML(p.averagePerformance)}</div>
                                 </div>
                             </div>
-                            
+
                             <div class="personnel-stat">
-                                <div class="personnel-stat-value">${personnel.averageResponseTime.toFixed(1)}h</div>
+                                <div class="personnel-stat-value">${p.averageResponseTime.toFixed(1)}h</div>
                                 <div class="personnel-stat-label">Avg Response Time</div>
                                 <div class="personnel-stat-label" style="margin-top: 5px;">
-                                    <span style="color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
-                                                       personnel.averageResponseTime <= 4 ? '#68d391' : 
-                                                       personnel.averageResponseTime <= 8 ? '#d69e2e' : 
-                                                       personnel.averageResponseTime <= 12 ? '#ed8936' : 
-                                                       personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}; font-weight: 600;">
-                                        ${personnel.averageResponseTime < 1 ? 'Excellent' : 
-                                         personnel.averageResponseTime <= 4 ? 'Very Good' : 
-                                         personnel.averageResponseTime <= 8 ? 'Good' : 
-                                         personnel.averageResponseTime <= 12 ? 'Average' : 
-                                         personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
-                                    </span>
+                                    <span style="color: ${rColor}; font-weight: 600;">${rLabel}</span>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="personnel-chart-mini" id="${chartId}"></div>
-                        
+
+                        <div class="personnel-chart-mini" id="personnel-chart-${index}"></div>
+
                         <div class="personnel-tickets">
-                            <div><strong>${personnel.totalTickets}</strong> total tickets handled</div>
-                            <div>Most common update type: ${personnel.primaryUpdateType.substring(0, 30)}${personnel.primaryUpdateType.length > 30 ? '...' : ''}</div>
+                            <div><strong>${p.totalTickets}</strong> total tickets handled</div>
+                            <div>Most common update type: ${escapeHTML(updateTypeShort)}</div>
                         </div>
                     </div>
                 `;
-                
-                personnelGrid.innerHTML += cardHTML;
-                
-                // Create mini chart for response times
-                createMiniResponseChart(personnel, chartId);
-                
-                // Add to table
-                const rowHTML = `
+            }).join('');
+
+            tableBody.innerHTML = personnelArray.map((p, index) => {
+                const rColor = getResponseColor(p.averageResponseTime);
+                const rLabel = getResponseLabel(p.averageResponseTime);
+                return `
                     <tr>
+                        <td><div class="rank ${index < 3 ? `rank-${index + 1}` : ''}">${index + 1}</div></td>
+                        <td><strong>${escapeHTML(p.name)}</strong></td>
+                        <td><strong style="font-size: 1.1rem;">${p.combinedScore.toFixed(1)}</strong>/10</td>
+                        <td>${p.averagePerformance.toFixed(1)}/5</td>
                         <td>
-                            <div class="rank ${index < 3 ? `rank-${index + 1}` : ''}">
-                                ${index + 1}
-                            </div>
+                            ${p.averageResponseTime.toFixed(1)}h
+                            <div style="font-size: 0.8rem; color: ${rColor}">${rLabel}</div>
                         </td>
-                        <td><strong>${personnel.name}</strong></td>
-                        <td><strong style="font-size: 1.1rem;">${personnel.combinedScore.toFixed(1)}</strong>/10</td>
-                        <td>${personnel.averagePerformance.toFixed(1)}/5</td>
-                        <td>
-                            ${personnel.averageResponseTime.toFixed(1)}h
-                            <div style="font-size: 0.8rem; color: ${personnel.averageResponseTime < 1 ? '#38a169' : 
-                                                                   personnel.averageResponseTime <= 4 ? '#68d391' : 
-                                                                   personnel.averageResponseTime <= 8 ? '#d69e2e' : 
-                                                                   personnel.averageResponseTime <= 12 ? '#ed8936' : 
-                                                                   personnel.averageResponseTime <= 16 ? '#dd6b20' : '#e53e3e'}">
-                                ${personnel.averageResponseTime < 1 ? 'Excellent' : 
-                                 personnel.averageResponseTime <= 4 ? 'Very Good' : 
-                                 personnel.averageResponseTime <= 8 ? 'Good' : 
-                                 personnel.averageResponseTime <= 12 ? 'Average' : 
-                                 personnel.averageResponseTime <= 16 ? 'Below Avg' : 'Poor'}
-                            </div>
-                        </td>
-                        <td>${personnel.totalTickets}</td>
-                        <td>
-                            <span class="rating-badge ${personnel.performanceCategory.class}">
-                                ${personnel.performanceCategory.label}
-                            </span>
-                        </td>
+                        <td>${p.totalTickets}</td>
+                        <td><span class="rating-badge ${p.performanceCategory.class}">${p.performanceCategory.label}</span></td>
                     </tr>
                 `;
-                
-                performanceTableBody.innerHTML += rowHTML;
-            });
+            }).join('');
+
+            personnelArray.forEach((p, index) => createMiniResponseChart(p, `personnel-chart-${index}`));
         }
-        
-        // Create demographics chart (age groups and gender) - Grouped Bar Chart
+
+        function createMiniResponseChart(personnelData, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container || !personnelData.responseTimes || personnelData.responseTimes.length === 0) return;
+
+            const width = 200, height = 40;
+            const margin = { top: 5, right: 5, bottom: 5, left: 5 };
+            const responseTimes = personnelData.responseTimes.slice(-6);
+
+            const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+
+            const x = d3.scaleBand()
+                .domain(responseTimes.map((d, i) => i))
+                .range([margin.left, width - margin.right])
+                .padding(0.2);
+
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(responseTimes) || 1])
+                .nice()
+                .range([height - margin.bottom, margin.top]);
+
+            svg.selectAll('.mini-bar')
+                .data(responseTimes)
+                .enter()
+                .append('rect')
+                .attr('x', (d, i) => x(i))
+                .attr('y', d => y(d))
+                .attr('width', x.bandwidth())
+                .attr('height', d => height - margin.bottom - y(d))
+                .attr('fill', d => getResponseColor(d))
+                .attr('rx', 2)
+                .attr('ry', 2);
+        }
+
+        // ==================== CHARTS ====================
         function createDemographicsChart() {
             const container = document.getElementById('demographicsChart');
             container.innerHTML = '';
             const legend = document.getElementById('demographicsLegend');
             legend.innerHTML = '';
-            
+
             const margin = { top: 20, right: 30, bottom: 50, left: 60 };
             const width = container.clientWidth - margin.left - margin.right;
             const height = container.clientHeight - margin.top - margin.bottom;
-            
-            const svg = d3.select('#demographicsChart')
-                .append('svg')
+
+            const svg = d3.select(container).append('svg')
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
-            
-            // Prepare combined age and gender data
+
             const ageGenderData = {};
-            
             closedTicketsData.forEach(ticket => {
-                if (ticket.Age && ticket.Sex) {
-                    const age = parseInt(ticket.Age);
-                    if (!isNaN(age)) {
-                        let ageGroup;
-                        if (age <= 25) ageGroup = '18-25';
-                        else if (age <= 35) ageGroup = '26-35';
-                        else if (age <= 45) ageGroup = '36-45';
-                        else if (age <= 55) ageGroup = '46-55';
-                        else ageGroup = '56+';
-                        
-                        const gender = ticket.Sex.trim().toLowerCase();
-                        const genderKey = (gender === 'male' || gender === 'm') ? 'Male' : 
-                                         (gender === 'female' || gender === 'f') ? 'Female' : 'Other';
-                        
-                        if (!ageGenderData[ageGroup]) {
-                            ageGenderData[ageGroup] = { 'Male': 0, 'Female': 0, 'Other': 0 };
-                        }
-                        
-                        ageGenderData[ageGroup][genderKey] += 1;
-                    }
-                }
+                const age = parseInt(ticket.Age);
+                if (isNaN(age) || !ticket.Sex) return;
+                const group = getAgeGroup(age);
+                const sex = normalizeSex(ticket.Sex);
+                if (!ageGenderData[group]) ageGenderData[group] = { Male: 0, Female: 0, Other: 0 };
+                ageGenderData[group][sex]++;
             });
-            
-            // Convert to array format for d3
+
             const ageGroups = Object.keys(ageGenderData).sort();
             const genders = ['Male', 'Female'];
-            
-            const data = [];
-            ageGroups.forEach(ageGroup => {
-                genders.forEach(gender => {
-                    if (ageGenderData[ageGroup][gender] > 0) {
-                        data.push({
-                            ageGroup: ageGroup,
-                            gender: gender,
-                            count: ageGenderData[ageGroup][gender]
-                        });
-                    }
-                });
-            });
-            
-            // X scale for age groups
-            const x0 = d3.scaleBand()
-                .domain(ageGroups)
-                .range([0, width])
-                .padding(0.2);
-            
-            // X scale for genders within each age group
-            const x1 = d3.scaleBand()
-                .domain(genders)
-                .range([0, x0.bandwidth()])
-                .padding(0.05);
-            
-            // Y scale for counts
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.count)])
-                .nice()
-                .range([height, 0]);
-            
-            // Gender colors
-            const genderColors = {
-                'Male': '#2c5282',
-                'Female': '#d53f8c',
-                'Other': '#94a3b8'
-            };
-            
-            // Add X axis
-            svg.append('g')
-                .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(x0));
-            
-            // Add Y axis
-            svg.append('g')
-                .call(d3.axisLeft(y));
-            
-            // Add bars for each age group and gender
-            const ageGroupsSelection = svg.selectAll('.age-group')
+            const genderColors = { Male: '#2c5282', Female: '#d53f8c', Other: '#94a3b8' };
+            const maxCount = d3.max(ageGroups, g => Math.max(ageGenderData[g].Male, ageGenderData[g].Female)) || 1;
+
+            const x0 = d3.scaleBand().domain(ageGroups).range([0, width]).padding(0.2);
+            const x1 = d3.scaleBand().domain(genders).range([0, x0.bandwidth()]).padding(0.05);
+            const y = d3.scaleLinear().domain([0, maxCount]).nice().range([height, 0]);
+
+            svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x0));
+            svg.append('g').call(d3.axisLeft(y));
+
+            const groupSel = svg.selectAll('.age-group')
                 .data(ageGroups)
                 .enter()
                 .append('g')
-                .attr('class', 'age-group')
                 .attr('transform', d => `translate(${x0(d)},0)`);
-            
-            ageGroupsSelection.selectAll('.gender-bar')
-                .data(d => genders.map(gender => ({
-                    ageGroup: d,
-                    gender: gender,
-                    count: ageGenderData[d][gender] || 0
-                })))
+
+            const barData = d => genders.map(gender => ({ ageGroup: d, gender, count: ageGenderData[d][gender] || 0 }));
+
+            groupSel.selectAll('rect')
+                .data(barData)
                 .enter()
                 .append('rect')
-                .attr('class', 'gender-bar')
                 .attr('x', d => x1(d.gender))
                 .attr('y', d => y(d.count))
                 .attr('width', x1.bandwidth())
@@ -2356,48 +1585,33 @@
                 .attr('fill', d => genderColors[d.gender])
                 .attr('rx', 3)
                 .attr('ry', 3)
-                .on('mouseover', function(event, d) {
-                    tooltip.transition().duration(200).style('opacity', .9);
-                    tooltip.html(`
-                        <strong>${d.ageGroup} Age Group</strong><br/>
-                        Gender: ${d.gender}<br/>
-                        Tickets: ${d.count}<br/>
-                        Percentage: ${((d.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
-                    `)
-                    .style('left', (event.pageX + 10) + 'px')
-                    .style('top', (event.pageY - 28) + 'px');
-                })
-                .on('mouseout', function() {
-                    tooltip.transition().duration(500).style('opacity', 0);
-                });
-            
-            // Add value labels on bars (only if count > 0 and bar is tall enough)
-            ageGroupsSelection.selectAll('.gender-label')
-                .data(d => genders.map(gender => ({
-                    ageGroup: d,
-                    gender: gender,
-                    count: ageGenderData[d][gender] || 0
-                })))
+                .on('mouseover', (event, d) => showTooltip(event, `
+                    <strong>${d.ageGroup} Age Group</strong><br/>
+                    Sex: ${d.gender}<br/>
+                    Tickets: ${d.count}<br/>
+                    Percentage: ${((d.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
+                `))
+                .on('mouseout', hideTooltip);
+
+            groupSel.selectAll('text')
+                .data(barData)
                 .enter()
                 .append('text')
-                .filter(d => d.count > 0 && (height - y(d.count)) > 20) // Only show if bar is tall enough
-                .attr('class', 'gender-label')
+                .filter(d => d.count > 0)
                 .attr('x', d => x1(d.gender) + x1.bandwidth() / 2)
                 .attr('y', d => y(d.count) - 5)
                 .attr('text-anchor', 'middle')
                 .text(d => d.count)
                 .style('font-size', '11px')
                 .style('font-weight', 'bold')
-                .style('fill', d => d.gender === 'Female' ? '#d53f8c' : '#2c5282');
-            
-            // Add X axis label
+                .style('fill', d => genderColors[d.gender]);
+
             svg.append('text')
-                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .attr('transform', `translate(${width / 2},${height + margin.bottom - 10})`)
                 .style('text-anchor', 'middle')
                 .text('Age Group')
                 .style('fill', '#64748b');
-            
-            // Add Y axis label
+
             svg.append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('y', 0 - margin.left)
@@ -2406,74 +1620,47 @@
                 .style('text-anchor', 'middle')
                 .text('Number of Tickets')
                 .style('fill', '#64748b');
-            
-            // Create legend for gender
-            const genderData = [
-                { label: 'Male', count: analyticsSummary.genderCount.Male, color: '#2c5282' },
-                { label: 'Female', count: analyticsSummary.genderCount.Female, color: '#d53f8c' }
-            ];
-            
-            legend.innerHTML = genderData.map(item => {
-                const percentage = ((item.count / analyticsSummary.totalTickets) * 100).toFixed(1);
-                return `
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: ${item.color};"></div>
-                        <span>${item.label}: ${item.count} tickets (${percentage}%)</span>
-                    </div>
-                `;
-            }).join('');
+
+            legend.innerHTML = [
+                { label: 'Male', count: analyticsSummary.genderCount.Male, color: genderColors.Male },
+                { label: 'Female', count: analyticsSummary.genderCount.Female, color: genderColors.Female }
+            ].map(item => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: ${item.color};"></div>
+                    <span>${item.label}: ${item.count} tickets (${((item.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%)</span>
+                </div>
+            `).join('');
         }
-        
-        // Create website update type chart (pie chart)
+
         function createUpdateTypeChart() {
             const container = document.getElementById('updateTypeChart');
             container.innerHTML = '';
             const legend = document.getElementById('updateTypeLegend');
             legend.innerHTML = '';
-            
+
             const width = container.clientWidth;
             const height = container.clientHeight;
             const radius = Math.min(width, height) / 2 - 20;
-            
-            const svg = d3.select('#updateTypeChart')
-                .append('svg')
+
+            const svg = d3.select(container).append('svg')
                 .attr('width', width)
                 .attr('height', height)
                 .append('g')
-                .attr('transform', `translate(${width/2},${height/2})`);
-            
-            // Prepare website update type data
-            const updateTypeData = Object.entries(analyticsSummary.updateTypes)
+                .attr('transform', `translate(${width / 2},${height / 2})`);
+
+            const topUpdateTypes = Object.entries(analyticsSummary.updateTypes)
                 .map(([updateType, count]) => ({ updateType, count }))
-                .sort((a, b) => b.count - a.count);
-            
-            // Limit to top 8 update types for readability
-            const topUpdateTypes = updateTypeData.slice(0, 8);
-            
-            // Create pie layout
-            const pie = d3.pie()
-                .value(d => d.count)
-                .sort(null);
-            
-            // Create arc generator
-            const arc = d3.arc()
-                .innerRadius(0)
-                .outerRadius(radius);
-            
-            // Create outer arc for labels
-            const outerArc = d3.arc()
-                .innerRadius(radius * 1.1)
-                .outerRadius(radius * 1.1);
-            
-            // Generate arcs
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 8);
+
+            const pie = d3.pie().value(d => d.count).sort(null);
+            const arc = d3.arc().innerRadius(0).outerRadius(radius);
             const arcs = pie(topUpdateTypes);
-            
-            // Color scale for update types
+
             const updateTypeColor = d3.scaleOrdinal()
                 .domain(topUpdateTypes.map(d => d.updateType))
                 .range(colorScale.range());
-            
-            // Draw arcs
+
             svg.selectAll('path')
                 .data(arcs)
                 .enter()
@@ -2482,116 +1669,79 @@
                 .attr('fill', d => updateTypeColor(d.data.updateType))
                 .attr('stroke', 'white')
                 .style('stroke-width', '2px')
-                .on('mouseover', function(event, d) {
-                    tooltip.transition().duration(200).style('opacity', .9);
-                    tooltip.html(`
-                        <strong>${d.data.updateType}</strong><br/>
+                .on('mouseover', function (event, d) {
+                    showTooltip(event, `
+                        <strong>${escapeHTML(d.data.updateType)}</strong><br/>
                         Tickets: ${d.data.count}<br/>
                         Percentage: ${((d.data.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
-                    `)
-                    .style('left', (event.pageX + 10) + 'px')
-                    .style('top', (event.pageY - 28) + 'px');
-                    
-                    d3.select(this).transition()
-                        .duration(200)
-                        .attr('transform', 'scale(1.05)');
+                    `);
+                    d3.select(this).transition().duration(200).attr('transform', 'scale(1.05)');
                 })
-                .on('mouseout', function(event, d) {
-                    tooltip.transition().duration(500).style('opacity', 0);
-                    d3.select(this).transition()
-                        .duration(200)
-                        .attr('transform', 'scale(1)');
+                .on('mouseout', function () {
+                    hideTooltip();
+                    d3.select(this).transition().duration(200).attr('transform', 'scale(1)');
                 });
-            
-            // Add labels
+
+            // Percentage labels inside slices (long names are in the legend below)
+            const labelArc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 0.6);
             svg.selectAll('text')
                 .data(arcs)
                 .enter()
                 .append('text')
-                .attr('transform', d => {
-                    const pos = outerArc.centroid(d);
-                    return `translate(${pos[0]},${pos[1]})`;
-                })
+                .filter(d => (d.endAngle - d.startAngle) > 0.25)
+                .attr('transform', d => `translate(${labelArc.centroid(d)})`)
+                .attr('text-anchor', 'middle')
                 .attr('dy', '.35em')
-                .style('text-anchor', d => {
-                    const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                    return (midangle < Math.PI) ? 'start' : 'end';
-                })
-                .text(d => d.data.updateType)
+                .text(d => `${((d.data.count / analyticsSummary.totalTickets) * 100).toFixed(0)}%`)
                 .style('font-size', '12px')
-                .style('fill', '#2c5282')
+                .style('fill', 'white')
                 .style('font-weight', 'bold');
-            
-            // Create legend
-            legend.innerHTML = topUpdateTypes.map((item, i) => `
+
+            legend.innerHTML = topUpdateTypes.map(item => `
                 <div class="legend-item">
                     <div class="legend-color" style="background-color: ${updateTypeColor(item.updateType)};"></div>
-                    <span>${item.updateType}: ${item.count}</span>
+                    <span>${escapeHTML(item.updateType)}: ${item.count}</span>
                 </div>
             `).join('');
         }
-        
-        // Create response time chart with text categories from J column
+
         function createResponseTimeChart() {
             const container = document.getElementById('responseTimeChart');
             container.innerHTML = '';
             const legend = document.getElementById('responseTimeLegend');
             legend.innerHTML = '';
-            
-            const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+
+            const margin = { top: 30, right: 30, bottom: 50, left: 60 };
             const width = container.clientWidth - margin.left - margin.right;
             const height = container.clientHeight - margin.top - margin.bottom;
-            
-            const svg = d3.select('#responseTimeChart')
-                .append('svg')
+
+            const svg = d3.select(container).append('svg')
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
-            
-            // Prepare response time category data from analytics
-            const responseTimeData = [
-                analyticsSummary.responseTimeCategories['Less than 1 hour'],
-                analyticsSummary.responseTimeCategories['Within the day'],
-                analyticsSummary.responseTimeCategories['The next day'],
-                analyticsSummary.responseTimeCategories['More than 2 days']
-            ];
-            
-            // Category colors
+
+            const rc = analyticsSummary.responseTimeCategories;
+            const responseTimeData = [rc['Less than 1 hour'], rc['Within the day'], rc['The next day'], rc['More than 2 days']];
             const categoryColors = {
-                'Less than 1 hour': '#38a169', // Green
-                'Within the day': '#d69e2e',   // Yellow
-                'The next day': '#ed8936',     // Orange
-                'More than 2 days': '#e53e3e'  // Red
+                'Less than 1 hour': '#38a169',
+                'Within the day': '#d69e2e',
+                'The next day': '#ed8936',
+                'More than 2 days': '#e53e3e'
             };
-            
-            // X scale for categories (using descriptions)
-            const x = d3.scaleBand()
-                .domain(responseTimeData.map(d => d.description))
-                .range([0, width])
-                .padding(0.3);
-            
-            // Y scale for counts
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(responseTimeData, d => d.count)])
-                .nice()
-                .range([height, 0]);
-            
-            // Add X axis
-            svg.append('g')
-                .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(x));
-            
-            // Add Y axis
-            svg.append('g')
-                .call(d3.axisLeft(y));
-            
-            // Add bars
+            const totalResponseTickets = responseTimeData.reduce((sum, d) => sum + d.count, 0);
+            const pct = d => totalResponseTickets === 0 ? '0.0' : ((d.count / totalResponseTickets) * 100).toFixed(1);
+
+            const x = d3.scaleBand().domain(responseTimeData.map(d => d.description)).range([0, width]).padding(0.3);
+            const y = d3.scaleLinear().domain([0, d3.max(responseTimeData, d => d.count) || 1]).nice().range([height, 0]);
+
+            svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x));
+            svg.append('g').call(d3.axisLeft(y));
+
             svg.selectAll('.response-bar')
                 .data(responseTimeData)
                 .enter()
                 .append('rect')
-                .attr('class', 'response-bar')
                 .attr('x', d => x(d.description))
                 .attr('y', d => y(d.count))
                 .attr('width', x.bandwidth())
@@ -2599,70 +1749,31 @@
                 .attr('fill', d => categoryColors[d.label])
                 .attr('rx', 4)
                 .attr('ry', 4)
-                .on('mouseover', function(event, d) {
-                    tooltip.transition().duration(200).style('opacity', .9);
-                    tooltip.html(`
-                        <strong>${d.label}</strong><br/>
-                        Time Range: ${d.description}<br/>
-                        Tickets: ${d.count}<br/>
-                        Percentage: ${calculateResponseTimePercentage(d.label)}%
-                    `)
-                    .style('left', (event.pageX + 10) + 'px')
-                    .style('top', (event.pageY - 28) + 'px');
-                })
-                .on('mouseout', function() {
-                    tooltip.transition().duration(500).style('opacity', 0);
-                });
-            
-            // Add value labels on bars
+                .on('mouseover', (event, d) => showTooltip(event, `
+                    <strong>${d.label}</strong><br/>
+                    Time Range: ${d.description}<br/>
+                    Tickets: ${d.count}<br/>
+                    Percentage: ${pct(d)}%
+                `))
+                .on('mouseout', hideTooltip);
+
             svg.selectAll('.response-label')
                 .data(responseTimeData)
                 .enter()
                 .append('text')
-                .attr('class', 'response-label')
                 .attr('x', d => x(d.description) + x.bandwidth() / 2)
                 .attr('y', d => y(d.count) - 5)
                 .attr('text-anchor', 'middle')
                 .text(d => d.count)
                 .style('font-weight', 'bold')
                 .style('fill', '#2c5282');
-            
-            // Calculate total tickets with response time
-            const totalResponseTickets = responseTimeData.reduce((sum, d) => sum + d.count, 0);
-            
-            // Calculate average numeric response time for reference line
-            const avgResponseTime = analyticsSummary.responseTimeStats.avg;
-            
-            // Add average response time line (if we have data)
-            if (totalResponseTickets > 0 && avgResponseTime > 0) {
-                svg.append('line')
-                    .attr('x1', 0)
-                    .attr('x2', width)
-                    .attr('y1', y(avgResponseTime))
-                    .attr('y2', y(avgResponseTime))
-                    .attr('stroke', '#2c5282')
-                    .attr('stroke-width', 2)
-                    .attr('stroke-dasharray', '5,5');
-                
-                // Add average label
-                svg.append('text')
-                    .attr('x', width - 5)
-                    .attr('y', y(avgResponseTime) - 5)
-                    .text(`Avg: ${avgResponseTime.toFixed(1)}h`)
-                    .style('font-size', '12px')
-                    .style('fill', '#2c5282')
-                    .style('font-weight', 'bold')
-                    .style('text-anchor', 'end');
-            }
-            
-            // Add X axis label
+
             svg.append('text')
-                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .attr('transform', `translate(${width / 2},${height + margin.bottom - 10})`)
                 .style('text-anchor', 'middle')
                 .text('Response Time Categories')
                 .style('fill', '#64748b');
-            
-            // Add Y axis label
+
             svg.append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('y', 0 - margin.left)
@@ -2671,180 +1782,91 @@
                 .style('text-anchor', 'middle')
                 .text('Number of Tickets')
                 .style('fill', '#64748b');
-            
-            // Add chart title
-            svg.append('text')
-                .attr('x', width / 2)
-                .attr('y', -10)
-                .attr('text-anchor', 'middle')
-                .style('font-size', '14px')
-                .style('font-weight', 'bold')
-                .style('fill', '#4a6fa5')
-                .text('Response Time Distribution by Category');
-            
-            // Calculate percentages for legend
-            function calculateResponseTimePercentage(categoryLabel) {
-                const category = responseTimeData.find(d => d.label === categoryLabel);
-                if (!category || totalResponseTickets === 0) return 0;
-                return ((category.count / totalResponseTickets) * 100).toFixed(1);
-            }
-            
-            // Create detailed legend
-            legend.innerHTML = responseTimeData.map(category => {
-                const percentage = calculateResponseTimePercentage(category.label);
-                return `
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: ${categoryColors[category.label]};"></div>
-                        <span>${category.label} (${category.description}): ${category.count} tickets (${percentage}%)</span>
-                    </div>
-                `;
-            }).join('');
-            
-            // Add average to legend (if available)
-            if (totalResponseTickets > 0 && avgResponseTime > 0) {
-                legend.innerHTML += `
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #2c5282; height: 2px; margin-top: 7px;"></div>
-                        <span>Average Numeric Time: ${avgResponseTime.toFixed(1)} hours</span>
-                    </div>
-                `;
-            }
+
+            const avgResponseTime = analyticsSummary.responseTimeStats.avg;
+            legend.innerHTML = responseTimeData.map(c => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: ${categoryColors[c.label]};"></div>
+                    <span>${c.label} (${c.description}): ${c.count} tickets (${pct(c)}%)</span>
+                </div>
+            `).join('') + (avgResponseTime > 0 ? `
+                <div class="legend-item">
+                    <i class="fas fa-clock" style="color: #2c5282;"></i>
+                    <span>Estimated average response time: ${avgResponseTime.toFixed(1)} hours</span>
+                </div>` : '');
         }
-        
-        // Create performance chart
+
         function createPerformanceChart() {
             const container = document.getElementById('performanceChart');
             container.innerHTML = '';
             const legend = document.getElementById('performanceLegend');
             legend.innerHTML = '';
-            
+
             const margin = { top: 20, right: 30, bottom: 50, left: 60 };
             const width = container.clientWidth - margin.left - margin.right;
             const height = container.clientHeight - margin.top - margin.bottom;
-            
-            const svg = d3.select('#performanceChart')
-                .append('svg')
+
+            const svg = d3.select(container).append('svg')
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
-            
-            // Group performance by rating (rounded to nearest 0.5)
+
             const performanceGroups = {};
             closedTicketsData.forEach(ticket => {
                 if (ticket['Performance Rating'] > 0) {
-                    const rating = Math.round(ticket['Performance Rating'] * 2) / 2; // Round to nearest 0.5
-                    if (!performanceGroups[rating]) {
-                        performanceGroups[rating] = [];
-                    }
-                    performanceGroups[rating].push(ticket);
+                    const rating = Math.round(ticket['Performance Rating'] * 2) / 2;
+                    performanceGroups[rating] = (performanceGroups[rating] || 0) + 1;
                 }
             });
-            
-            // Convert to array
+
             const performanceData = Object.entries(performanceGroups)
-                .map(([rating, tickets]) => ({
-                    rating: parseFloat(rating),
-                    count: tickets.length,
-                    tickets: tickets
-                }))
+                .map(([rating, count]) => ({ rating: parseFloat(rating), count }))
                 .sort((a, b) => a.rating - b.rating);
-            
-            // X scale for ratings
-            const x = d3.scaleBand()
-                .domain(performanceData.map(d => d.rating))
-                .range([0, width])
-                .padding(0.2);
-            
-            // Y scale for counts
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(performanceData, d => d.count)])
-                .nice()
-                .range([height, 0]);
-            
-            // Add X axis
-            svg.append('g')
-                .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(x).tickFormat(d => d.toFixed(1)));
-            
-            // Add Y axis
-            svg.append('g')
-                .call(d3.axisLeft(y));
-            
-            // Add bars
+
+            const x = d3.scaleBand().domain(performanceData.map(d => d.rating)).range([0, width]).padding(0.2);
+            const y = d3.scaleLinear().domain([0, d3.max(performanceData, d => d.count) || 1]).nice().range([height, 0]);
+
+            svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x).tickFormat(d => d.toFixed(1)));
+            svg.append('g').call(d3.axisLeft(y));
+
+            const ratingColor = r => r >= 4 ? '#38a169' : r >= 3 ? '#d69e2e' : '#e53e3e';
+
             svg.selectAll('.performance-bar')
                 .data(performanceData)
                 .enter()
                 .append('rect')
-                .attr('class', 'performance-bar')
                 .attr('x', d => x(d.rating))
                 .attr('y', d => y(d.count))
                 .attr('width', x.bandwidth())
                 .attr('height', d => height - y(d.count))
-                .attr('fill', d => {
-                    // Color based on rating (green for high, yellow for medium, red for low)
-                    if (d.rating >= 4) return '#38a169';
-                    if (d.rating >= 3) return '#d69e2e';
-                    return '#e53e3e';
-                })
+                .attr('fill', d => ratingColor(d.rating))
                 .attr('rx', 4)
                 .attr('ry', 4)
-                .on('mouseover', function(event, d) {
-                    tooltip.transition().duration(200).style('opacity', .9);
-                    tooltip.html(`
-                        <strong>Rating: ${d.rating}/5</strong><br/>
-                        Tickets: ${d.count}<br/>
-                        Percentage: ${((d.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
-                    `)
-                    .style('left', (event.pageX + 10) + 'px')
-                    .style('top', (event.pageY - 28) + 'px');
-                })
-                .on('mouseout', function() {
-                    tooltip.transition().duration(500).style('opacity', 0);
-                });
-            
-            // Add value labels on bars
+                .on('mouseover', (event, d) => showTooltip(event, `
+                    <strong>Rating: ${d.rating}/5</strong><br/>
+                    Tickets: ${d.count}<br/>
+                    Percentage: ${((d.count / analyticsSummary.totalTickets) * 100).toFixed(1)}%
+                `))
+                .on('mouseout', hideTooltip);
+
             svg.selectAll('.performance-label')
                 .data(performanceData)
                 .enter()
                 .append('text')
-                .attr('class', 'performance-label')
                 .attr('x', d => x(d.rating) + x.bandwidth() / 2)
                 .attr('y', d => y(d.count) - 5)
                 .attr('text-anchor', 'middle')
                 .text(d => d.count)
                 .style('font-weight', 'bold')
                 .style('fill', '#2c5282');
-            
-            // Add average line
-            const avgPerformance = analyticsSummary.performanceStats.avg;
-            svg.append('line')
-                .attr('x1', 0)
-                .attr('x2', width)
-                .attr('y1', y(avgPerformance))
-                .attr('y2', y(avgPerformance))
-                .attr('stroke', '#2c5282')
-                .attr('stroke-width', 2)
-                .attr('stroke-dasharray', '5,5');
-            
-            // Add average label
+
             svg.append('text')
-                .attr('x', width - 5)
-                .attr('y', y(avgPerformance) - 5)
-                .text(`Avg: ${avgPerformance.toFixed(1)}`)
-                .style('font-size', '12px')
-                .style('fill', '#2c5282')
-                .style('font-weight', 'bold')
-                .style('text-anchor', 'end');
-            
-            // Add X axis label
-            svg.append('text')
-                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .attr('transform', `translate(${width / 2},${height + margin.bottom - 10})`)
                 .style('text-anchor', 'middle')
                 .text('Performance Rating (1-5 scale)')
                 .style('fill', '#64748b');
-            
-            // Add Y axis label
+
             svg.append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('y', 0 - margin.left)
@@ -2853,144 +1875,103 @@
                 .style('text-anchor', 'middle')
                 .text('Number of Tickets')
                 .style('fill', '#64748b');
-            
-            // Create legend
+
+            const avgPerformance = analyticsSummary.performanceStats.avg;
             legend.innerHTML = `
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #38a169;"></div>
-                    <span>High Performance (4.0+)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #d69e2e;"></div>
-                    <span>Medium Performance (3.0-3.9)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #e53e3e;"></div>
-                    <span>Low Performance (&lt;3.0)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #2c5282; height: 2px; margin-top: 7px;"></div>
-                    <span>Average: ${avgPerformance.toFixed(1)}/5</span>
-                </div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #38a169;"></div><span>High Performance (4.0+)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #d69e2e;"></div><span>Medium Performance (3.0-3.9)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #e53e3e;"></div><span>Low Performance (&lt;3.0)</span></div>
+                <div class="legend-item"><i class="fas fa-star" style="color: #f6ad55;"></i><span>Average rating: ${avgPerformance.toFixed(2)}/5</span></div>
             `;
         }
-        
-        // Create correlation chart (scatter plot)
+
         function createCorrelationChart() {
             const container = document.getElementById('correlationChart');
             container.innerHTML = '';
             const legend = document.getElementById('correlationLegend');
             legend.innerHTML = '';
-            
+
             const margin = { top: 20, right: 30, bottom: 50, left: 60 };
             const width = container.clientWidth - margin.left - margin.right;
             const height = container.clientHeight - margin.top - margin.bottom;
-            
-            const svg = d3.select('#correlationChart')
-                .append('svg')
+
+            const svg = d3.select(container).append('svg')
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
-            
-            // Prepare correlation data
+
             const correlationData = closedTicketsData
-                .filter(ticket => ticket['Response Time'] > 0 && ticket['Performance Rating'] > 0)
-                .map(ticket => ({
-                    responseTime: ticket['Response Time'],
-                    performance: ticket['Performance Rating'],
-                    updateType: ticket['Type of Website Update'] || 'Unknown'
+                .filter(t => t['Response Time'] > 0 && t['Performance Rating'] > 0)
+                .map(t => ({
+                    responseTime: t['Response Time'],
+                    performance: t['Performance Rating'],
+                    updateType: t['Type of Website Update'] || 'Unknown'
                 }));
-            
-            // X scale for response time
-            const x = d3.scaleLinear()
-                .domain([0, d3.max(correlationData, d => d.responseTime)])
-                .nice()
-                .range([0, width]);
-            
-            // Y scale for performance
-            const y = d3.scaleLinear()
-                .domain([0, 5]) // Performance is 1-5 scale
-                .nice()
-                .range([height, 0]);
-            
-            // Add X axis
+
+            const maxX = d3.max(correlationData, d => d.responseTime) || 1;
+            const x = d3.scaleLinear().domain([0, maxX]).nice().range([0, width]);
+            const y = d3.scaleLinear().domain([0, 5]).nice().range([height, 0]);
+
+            svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x).tickFormat(d => d + 'h'));
+            svg.append('g').call(d3.axisLeft(y));
+
             svg.append('g')
                 .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(x).tickFormat(d => d + 'h'));
-            
-            // Add Y axis
+                .call(d3.axisBottom(x).tickSize(-height).tickFormat(''))
+                .call(g => g.selectAll('line').attr('stroke', '#edf2f7'))
+                .call(g => g.select('.domain').remove());
+
             svg.append('g')
-                .call(d3.axisLeft(y));
-            
-            // Add grid lines
-            svg.append('g')
-                .attr('class', 'grid')
-                .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(x).tickSize(-height).tickFormat(''));
-            
-            svg.append('g')
-                .attr('class', 'grid')
-                .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));
-            
-            // Add dots
+                .call(d3.axisLeft(y).tickSize(-width).tickFormat(''))
+                .call(g => g.selectAll('line').attr('stroke', '#edf2f7'))
+                .call(g => g.select('.domain').remove());
+
+            // Small horizontal jitter so overlapping tickets are visible
             svg.selectAll('.correlation-dot')
                 .data(correlationData)
                 .enter()
                 .append('circle')
-                .attr('class', 'correlation-dot')
-                .attr('cx', d => x(d.responseTime))
-                .attr('cy', d => y(d.performance))
+                .attr('cx', d => x(d.responseTime) + (Math.random() - 0.5) * 12)
+                .attr('cy', d => y(d.performance) + (Math.random() - 0.5) * 8)
                 .attr('r', 6)
                 .attr('fill', d => {
-                    // Color by response time category
-                    if (d.responseTime < 1) return '#38a169';        // <1 hour
-                    if (d.responseTime <= 8) return '#d69e2e';      // 1-8 hours
-                    if (d.responseTime <= 16) return '#ed8936';     // 8-16 hours
-                    return '#e53e3e';                              // >16 hours
+                    if (d.responseTime < 1) return '#38a169';
+                    if (d.responseTime <= 8) return '#d69e2e';
+                    if (d.responseTime <= 16) return '#ed8936';
+                    return '#e53e3e';
                 })
                 .attr('opacity', 0.7)
                 .attr('stroke', 'white')
                 .attr('stroke-width', 1)
-                .on('mouseover', function(event, d) {
-                    tooltip.transition().duration(200).style('opacity', .9);
-                    tooltip.html(`
-                        <strong>Update Type: ${d.updateType}</strong><br/>
-                        Response Time: ${d.responseTime.toFixed(1)} hours<br/>
-                        Performance: ${d.performance.toFixed(1)}/5
-                    `)
-                    .style('left', (event.pageX + 10) + 'px')
-                    .style('top', (event.pageY - 28) + 'px');
-                })
-                .on('mouseout', function() {
-                    tooltip.transition().duration(500).style('opacity', 0);
-                });
-            
-            // Calculate correlation coefficient
+                .on('mouseover', (event, d) => showTooltip(event, `
+                    <strong>Update Type: ${escapeHTML(d.updateType)}</strong><br/>
+                    Response Time: ${d.responseTime.toFixed(1)} hours<br/>
+                    Performance: ${d.performance.toFixed(1)}/5
+                `))
+                .on('mouseout', hideTooltip);
+
             const correlation = calculateCorrelation(correlationData);
-            
-            // Add correlation line if there's a correlation
-            if (Math.abs(correlation) > 0.1 && correlationData.length > 1) {
+            const showRegression = Math.abs(correlation) > 0.1 && correlationData.length > 1;
+
+            if (showRegression) {
                 const regression = linearRegression(correlationData);
-                
                 svg.append('line')
                     .attr('x1', x(0))
-                    .attr('x2', x(d3.max(correlationData, d => d.responseTime)))
+                    .attr('x2', x(maxX))
                     .attr('y1', y(regression.intercept))
-                    .attr('y2', y(regression.intercept + regression.slope * d3.max(correlationData, d => d.responseTime)))
+                    .attr('y2', y(regression.intercept + regression.slope * maxX))
                     .attr('stroke', '#2c5282')
                     .attr('stroke-width', 2)
                     .attr('stroke-dasharray', '5,5');
             }
-            
-            // Add X axis label
+
             svg.append('text')
-                .attr('transform', `translate(${width/2},${height + margin.bottom - 10})`)
+                .attr('transform', `translate(${width / 2},${height + margin.bottom - 10})`)
                 .style('text-anchor', 'middle')
                 .text('Response Time (hours)')
                 .style('fill', '#64748b');
-            
-            // Add Y axis label
+
             svg.append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('y', 0 - margin.left)
@@ -2999,100 +1980,92 @@
                 .style('text-anchor', 'middle')
                 .text('Performance Rating (1-5)')
                 .style('fill', '#64748b');
-            
-            // Add correlation coefficient text
+
             svg.append('text')
                 .attr('x', width - 10)
-                .attr('y', 20)
+                .attr('y', height - 10)
                 .text(`Correlation: ${correlation.toFixed(2)}`)
                 .style('font-size', '14px')
                 .style('fill', '#2c5282')
                 .style('font-weight', 'bold')
                 .style('text-anchor', 'end');
-            
-            // Add response time category legend
+
             const responseColors = [
                 { label: '<1 hour', color: '#38a169' },
                 { label: '1-8 hours', color: '#d69e2e' },
                 { label: '8-16 hours', color: '#ed8936' },
                 { label: '>16 hours', color: '#e53e3e' }
             ];
-            
-            const colorLegend = responseColors.map(item => `
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: ${item.color};"></div>
-                    <span>${item.label}</span>
-                </div>
-            `).join('');
-            
-            // Create legend
+
             legend.innerHTML = `
-                <div class="legend-item">
-                    <span>Each dot represents one closed ticket</span>
-                </div>
-                ${colorLegend}
-                <div class="legend-item">
-                    <span>Correlation coefficient: ${correlation.toFixed(2)}</span>
-                </div>
-                ${Math.abs(correlation) > 0.1 && correlationData.length > 1 ? `
+                <div class="legend-item"><span>Each dot represents one closed ticket</span></div>
+                ${responseColors.map(item => `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: ${item.color};"></div>
+                        <span>${item.label}</span>
+                    </div>`).join('')}
+                <div class="legend-item"><span>Correlation coefficient: ${correlation.toFixed(2)}</span></div>
+                ${showRegression ? `
                 <div class="legend-item">
                     <div class="legend-color" style="background-color: #2c5282; height: 2px; margin-top: 7px;"></div>
                     <span>Regression line (trend)</span>
-                </div>
-                ` : ''}
+                </div>` : ''}
             `;
         }
-        
-        // Helper function to calculate correlation coefficient
+
         function calculateCorrelation(data) {
             if (data.length < 2) return 0;
-            
             const n = data.length;
-            const sumX = data.reduce((sum, d) => sum + d.responseTime, 0);
-            const sumY = data.reduce((sum, d) => sum + d.performance, 0);
-            const sumXY = data.reduce((sum, d) => sum + d.responseTime * d.performance, 0);
-            const sumX2 = data.reduce((sum, d) => sum + d.responseTime * d.responseTime, 0);
-            const sumY2 = data.reduce((sum, d) => sum + d.performance * d.performance, 0);
-            
+            const sumX = d3.sum(data, d => d.responseTime);
+            const sumY = d3.sum(data, d => d.performance);
+            const sumXY = d3.sum(data, d => d.responseTime * d.performance);
+            const sumX2 = d3.sum(data, d => d.responseTime * d.responseTime);
+            const sumY2 = d3.sum(data, d => d.performance * d.performance);
             const numerator = n * sumXY - sumX * sumY;
             const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
-            
             return denominator === 0 ? 0 : numerator / denominator;
         }
-        
-        // Helper function for linear regression
+
         function linearRegression(data) {
             const n = data.length;
-            const sumX = data.reduce((sum, d) => sum + d.responseTime, 0);
-            const sumY = data.reduce((sum, d) => sum + d.performance, 0);
-            const sumXY = data.reduce((sum, d) => sum + d.responseTime * d.performance, 0);
-            const sumX2 = data.reduce((sum, d) => sum + d.responseTime * d.responseTime, 0);
-            
-            const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            const sumX = d3.sum(data, d => d.responseTime);
+            const sumY = d3.sum(data, d => d.performance);
+            const sumXY = d3.sum(data, d => d.responseTime * d.performance);
+            const sumX2 = d3.sum(data, d => d.responseTime * d.responseTime);
+            const denom = (n * sumX2 - sumX * sumX);
+            const slope = denom === 0 ? 0 : (n * sumXY - sumX * sumY) / denom;
             const intercept = (sumY - slope * sumX) / n;
-            
             return { slope, intercept };
         }
-        
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            // Generate quick date buttons dynamically
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', function () {
             generateQuickDateButtons();
-            
-            // Set default dates to current year
+
             const currentYear = new Date().getFullYear();
             document.getElementById('startDate').value = `${currentYear}-01-01`;
             document.getElementById('endDate').value = `${currentYear}-12-31`;
-            
-            // Set active button for current year
-            setTimeout(() => {
-                document.querySelectorAll('.quick-date-btn').forEach(btn => {
-                    if (btn.innerHTML === currentYear.toString()) {
-                        btn.classList.add('active');
+            setActiveYearButton(currentYear);
+
+            // Attach once (previously these were re-attached on every reload)
+            document.getElementById('sortPersonnel').addEventListener('change', sortAndFilterPersonnel);
+            document.getElementById('filterPersonnel').addEventListener('change', sortAndFilterPersonnel);
+
+            // Redraw charts when the window is resized
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (closedTicketsData.length > 0) {
+                        createDemographicsChart();
+                        createUpdateTypeChart();
+                        createResponseTimeChart();
+                        createPerformanceChart();
+                        createCorrelationChart();
                     }
-                });
-            }, 100);
-            
+                }, 250);
+            });
+
             loadDataWithDateFilter();
         });
     </script>
